@@ -122,10 +122,16 @@ enum PointEventType {
 // ============================================================
 
 model User {
-  id           Int     @id @default(autoincrement())
-  username     String  @unique @db.VarChar(40)
-  email        String? @unique @db.VarChar(255)
-  passwordHash String  @map("password_hash") @db.VarChar(255)
+  id       Int    @id @default(autoincrement())
+  username String @unique @db.VarChar(40)
+
+  // 保留旧邮箱字段，兼容现有账号
+  email String? @unique @db.VarChar(255)
+
+  // 新注册使用手机号
+  phone String? @unique @db.VarChar(20)
+
+  passwordHash String @map("password_hash") @db.VarChar(255)
 
   role   UserRole   @default(PLAYER)
   status UserStatus @default(ACTIVE)
