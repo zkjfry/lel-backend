@@ -40,7 +40,7 @@ export class TournamentsService {
 
         private readonly auditService:
             AuditService,
-    ) {}
+    ) { }
 
 
     /* =========================================================
@@ -247,6 +247,10 @@ export class TournamentsService {
 
                 include: {
 
+                    /* =========================================
+                       CREATOR
+                    ========================================= */
+
                     createdBy: {
 
                         select: {
@@ -260,9 +264,165 @@ export class TournamentsService {
                     },
 
 
-                    teams:
-                        true,
+                    /* =========================================
+                       PARTICIPANTS
+                    ========================================= */
 
+                    participants: {
+
+                        orderBy: {
+                            id: 'asc',
+                        },
+
+
+                        include: {
+
+                            /*
+                             * Temporarily include the complete
+                             * PlayerProfile.
+                             *
+                             * After we inspect the real JSON,
+                             * frontend/public fields will be
+                             * narrowed with select.
+                             */
+                            player: true,
+
+
+                            /*
+                             * If draft/team assignment has
+                             * completed, this tells us which
+                             * team the participant belongs to.
+                             */
+                            teamMembership: {
+
+                                include: {
+
+                                    team: {
+
+                                        select: {
+
+                                            id: true,
+
+                                            name: true,
+
+                                            shortName: true,
+
+                                            logoUrl: true,
+
+                                            seed: true,
+
+                                            draftOrder: true,
+
+                                        },
+
+                                    },
+
+                                },
+
+                            },
+
+                        },
+
+                    },
+
+
+                    /* =========================================
+                       TEAMS
+                    ========================================= */
+
+                    teams: {
+
+                        orderBy: [
+                            {
+                                seed: 'asc',
+                            },
+                            {
+                                id: 'asc',
+                            },
+                        ],
+
+
+                        include: {
+
+                            /* Captain */
+
+                            captainParticipant: {
+
+                                include: {
+
+                                    player: true,
+
+                                },
+
+                            },
+
+
+                            /* Team roster */
+
+                            members: {
+
+                                orderBy: {
+                                    id: 'asc',
+                                },
+
+
+                                include: {
+
+                                    participant: {
+
+                                        include: {
+
+                                            player: true,
+
+                                        },
+
+                                    },
+
+                                },
+
+                            },
+
+                        },
+
+                    },
+
+
+                    /* =========================================
+                       MATCHES
+                    ========================================= */
+
+                    matches: {
+
+                        orderBy: {
+                            id: 'asc',
+                        },
+
+                    },
+
+
+                    /* =========================================
+                       FINAL RESULTS
+                    ========================================= */
+
+                    results: {
+
+                        orderBy: {
+                            placement: 'asc',
+                        },
+
+
+                        include: {
+
+                            team: true,
+
+                        },
+
+                    },
+
+
+                    /* =========================================
+                       COUNTS
+                    ========================================= */
 
                     _count: {
 
