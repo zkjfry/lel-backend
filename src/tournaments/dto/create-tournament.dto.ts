@@ -1,75 +1,142 @@
 import {
-  IsEnum,
-  IsInt,
-  IsISO8601,
-  IsOptional,
-  IsString,
-  Max,
-  MaxLength,
-  Min,
+    Equals,
+    IsDateString,
+    IsDivisibleBy,
+    IsEnum,
+    IsInt,
+    IsOptional,
+    IsString,
+    MaxLength,
+    Min,
+    MinLength,
 } from 'class-validator';
 
 import {
-  MatchFormat,
-  TournamentFormat,
+    MatchFormat,
+    TournamentFormat,
 } from '../../generated/prisma/enums';
 
+
 export class CreateTournamentDto {
-  @IsString()
-  @MaxLength(120)
-  name: string;
 
-  @IsOptional()
-  @IsString()
-  @MaxLength(5000)
-  description?: string;
+    /* =========================================================
+       BASIC INFORMATION
+    ========================================================= */
 
-  @IsOptional()
-  @IsISO8601()
-  registrationStart?: string;
+    @IsString()
+    @MinLength(2)
+    @MaxLength(120)
+    name: string;
 
-  @IsOptional()
-  @IsISO8601()
-  registrationEnd?: string;
 
-  @IsOptional()
-  @IsISO8601()
-  checkinStart?: string;
+    @IsOptional()
+    @IsString()
+    description?: string;
 
-  @IsOptional()
-  @IsISO8601()
-  checkinEnd?: string;
 
-  @IsOptional()
-  @IsISO8601()
-  startTime?: string;
+    /* =========================================================
+       REGISTRATION
+    ========================================================= */
 
-  @IsInt()
-  @Min(2)
-  @Max(100)
-  maxPlayers: number;
+    @IsOptional()
+    @IsDateString()
+    registrationStart?: string;
 
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  @Max(100)
-  maxWaitlist?: number;
 
-  @IsInt()
-  @Min(2)
-  @Max(32)
-  teamCount: number;
+    @IsOptional()
+    @IsDateString()
+    registrationEnd?: string;
 
-  @IsInt()
-  @Min(1)
-  @Max(20)
-  playersPerTeam: number;
 
-  @IsOptional()
-  @IsEnum(MatchFormat)
-  matchFormat?: MatchFormat;
+    /* =========================================================
+       CHECK-IN
 
-  @IsOptional()
-  @IsEnum(TournamentFormat)
-  tournamentFormat?: TournamentFormat;
+       LEL V1 currently does not use check-in,
+       but these fields remain for schema compatibility.
+    ========================================================= */
+
+    @IsOptional()
+    @IsDateString()
+    checkinStart?: string;
+
+
+    @IsOptional()
+    @IsDateString()
+    checkinEnd?: string;
+
+
+    /* =========================================================
+       TOURNAMENT START
+    ========================================================= */
+
+    @IsOptional()
+    @IsDateString()
+    startTime?: string;
+
+
+    /* =========================================================
+       TOURNAMENT SIZE
+
+       LEL rules:
+
+       - exactly 5 players per team
+       - team count must be even
+       - max players must be a multiple of 10
+       - maxPlayers = teamCount × playersPerTeam
+
+       Valid examples:
+
+       10 players / 2 teams
+       20 players / 4 teams
+       30 players / 6 teams
+       40 players / 8 teams
+    ========================================================= */
+
+    @IsOptional()
+    @IsInt()
+    @Min(10)
+    @IsDivisibleBy(10, {
+        message:
+            'maxPlayers must be a multiple of 10',
+    })
+    maxPlayers?: number;
+
+
+    @IsOptional()
+    @IsInt()
+    @Min(0)
+    maxWaitlist?: number;
+
+
+    @IsOptional()
+    @IsInt()
+    @Min(2)
+    @IsDivisibleBy(2, {
+        message:
+            'teamCount must be an even number',
+    })
+    teamCount?: number;
+
+
+    @IsOptional()
+    @IsInt()
+    @Equals(5, {
+        message:
+            'playersPerTeam must be exactly 5',
+    })
+    playersPerTeam?: number;
+
+
+    /* =========================================================
+       MATCH SETTINGS
+    ========================================================= */
+
+    @IsOptional()
+    @IsEnum(MatchFormat)
+    matchFormat?: MatchFormat;
+
+
+    @IsOptional()
+    @IsEnum(TournamentFormat)
+    tournamentFormat?: TournamentFormat;
 }
