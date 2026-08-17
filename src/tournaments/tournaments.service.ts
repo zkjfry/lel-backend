@@ -206,8 +206,11 @@ export class TournamentsService {
 
                     select: {
 
-                        registrations:
-                            true,
+                        registrations: {
+                            where: {
+                                status: 'REGISTERED',
+                            },
+                        },
 
                         participants:
                             true,
@@ -428,8 +431,11 @@ export class TournamentsService {
 
                         select: {
 
-                            registrations:
-                                true,
+                            registrations: {
+                                where: {
+                                    status: 'REGISTERED',
+                                },
+                            },
 
                             participants:
                                 true,
