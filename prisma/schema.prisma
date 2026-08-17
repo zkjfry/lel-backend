@@ -1,0 +1,738 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================
+// ENUMS
+// ============================================================
+
+enum UserRole {
+  PLAYER
+  REFEREE
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  BANNED
+}
+
+enum PlayerRole {
+  TOP
+  JUNGLE
+  MID
+  ADC
+  SUPPORT
+}
+
+enum RankTier {
+  IRON
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
+  EMERALD
+  DIAMOND
+  MASTER
+  GRANDMASTER
+  CHALLENGER
+}
+
+enum TournamentStatus {
+  DRAFT
+  REGISTRATION_OPEN
+  REGISTRATION_CLOSED
+  CHECK_IN
+  DRAFTING
+  ROSTER_LOCKED
+  SCHEDULED
+  LIVE
+  COMPLETED
+  ARCHIVED
+  CANCELLED
+}
+
+enum TournamentFormat {
+  SINGLE_ELIMINATION
+  DOUBLE_ELIMINATION
+  ROUND_ROBIN
+}
+
+enum MatchFormat {
+  BO1
+  BO3
+  BO5
+}
+
+enum RegistrationStatus {
+  REGISTERED
+  WAITLIST
+  WITHDRAWN
+  REMOVED
+}
+
+enum ParticipantRole {
+  PLAYER
+  CAPTAIN
+}
+
+enum ParticipantStatus {
+  ACTIVE
+  WITHDRAWN
+  REMOVED
+  DISQUALIFIED
+}
+
+enum DraftStatus {
+  WAITING
+  ACTIVE
+  PAUSED
+  COMPLETED
+  CANCELLED
+}
+
+enum MatchStatus {
+  SCHEDULED
+  LIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum PointEventType {
+  GAME_WIN
+  GAME_LOSS
+  MVP
+  SVP
+  CHAMPION
+  RUNNER_UP
+  THIRD_PLACE
+  MANUAL_ADJUSTMENT
+}
+
+// ============================================================
+// 01. USERS
+// ============================================================
+
+model User {
+  id           Int     @id @default(autoincrement())
+  username     String  @unique @db.VarChar(40)
+  email        String? @unique @db.VarChar(255)
+  passwordHash String  @map("password_hash") @db.VarChar(255)
+
+  role   UserRole   @default(PLAYER)
+  status UserStatus @default(ACTIVE)
+
+  avatarUrl   String?   @map("avatar_url") @db.Text
+  lastLoginAt DateTime? @map("last_login_at") @db.Timestamptz(3)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  profile                  PlayerProfile?
+  createdTournaments       Tournament[]       @relation("TournamentCreator")
+  draftPicks               DraftPick[]        @relation("DraftPickedBy")
+  pointTransactionsCreated PointTransaction[] @relation("PointTransactionCreator")
+  auditLogs                AuditLog[]
+
+  @@index([status])
+  @@index([role])
+  @@map("users")
+}
+
+// ============================================================
+// 02. PLAYER PROFILE
+// ============================================================
+
+model PlayerProfile {
+  id     Int @id @default(autoincrement())
+  userId Int @unique @map("user_id")
+
+  displayName String @map("display_name") @db.VarChar(60)
+
+  riotGameName String? @map("riot_game_name") @db.VarChar(100)
+  riotTagLine  String? @map("riot_tag_line") @db.VarChar(20)
+  riotRegion   String? @map("riot_region") @db.VarChar(20)
+
+  rankTier     RankTier? @map("rank_tier")
+  rankDivision String?   @map("rank_division") @db.VarChar(10)
+
+  mainRole      PlayerRole? @map("main_role")
+  secondaryRole PlayerRole? @map("secondary_role")
+
+  yyName String? @map("yy_name") @db.VarChar(100)
+  bio    String? @db.Text
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  stats             PlayerStats?
+  roleRatings       PlayerRoleRating[]
+  registrations     TournamentRegistration[]
+  participants      TournamentParticipant[]
+  pointTransactions PointTransaction[]
+
+  @@index([displayName])
+  @@index([rankTier])
+  @@index([mainRole])
+  @@map("player_profiles")
+}
+
+// ============================================================
+// 03. TOURNAMENTS
+// ============================================================
+
+model Tournament {
+  id Int @id @default(autoincrement())
+
+  name        String  @db.VarChar(120)
+  slug        String  @unique @db.VarChar(150)
+  description String? @db.Text
+
+  status TournamentStatus @default(DRAFT)
+
+  registrationStart DateTime? @map("registration_start") @db.Timestamptz(3)
+  registrationEnd   DateTime? @map("registration_end") @db.Timestamptz(3)
+
+  checkinStart DateTime? @map("checkin_start") @db.Timestamptz(3)
+  checkinEnd   DateTime? @map("checkin_end") @db.Timestamptz(3)
+
+  startTime DateTime? @map("start_time") @db.Timestamptz(3)
+
+  maxPlayers  Int @default(20) @map("max_players")
+  maxWaitlist Int @default(5) @map("max_waitlist")
+
+  teamCount      Int @default(4) @map("team_count")
+  playersPerTeam Int @default(5) @map("players_per_team")
+
+  matchFormat      MatchFormat      @default(BO3) @map("match_format")
+  tournamentFormat TournamentFormat @default(SINGLE_ELIMINATION) @map("tournament_format")
+
+  createdById Int @map("created_by_id")
+
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  settledAt DateTime? @map("settled_at") @db.Timestamptz(3)
+
+  createdBy User @relation("TournamentCreator", fields: [createdById], references: [id], onDelete: Restrict)
+
+  registrations     TournamentRegistration[]
+  participants      TournamentParticipant[]
+  teams             TournamentTeam[]
+  draftSessions     DraftSession[]
+  matches           Match[]
+  results           TournamentResult[]
+  pointTransactions PointTransaction[]
+
+  @@index([status])
+  @@index([startTime])
+  @@index([createdAt])
+  @@map("tournaments")
+}
+
+// ============================================================
+// 04. TOURNAMENT REGISTRATIONS
+// ============================================================
+
+model TournamentRegistration {
+  id Int @id @default(autoincrement())
+
+  tournamentId Int @map("tournament_id")
+  playerId     Int @map("player_id")
+
+  status RegistrationStatus @default(REGISTERED)
+
+  primaryRole   PlayerRole? @map("primary_role")
+  secondaryRole PlayerRole? @map("secondary_role")
+
+  checkedIn        Boolean @default(false) @map("checked_in")
+  waitlistPosition Int?    @map("waitlist_position")
+
+  notes String? @db.Text
+
+  registeredAt DateTime  @default(now()) @map("registered_at") @db.Timestamptz(3)
+  checkedInAt  DateTime? @map("checked_in_at") @db.Timestamptz(3)
+
+  tournament Tournament    @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  player     PlayerProfile @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  @@unique([tournamentId, playerId])
+  @@unique([tournamentId, waitlistPosition])
+  @@index([tournamentId, status])
+  @@index([playerId])
+  @@map("tournament_registrations")
+}
+
+// ============================================================
+// 05. CONFIRMED TOURNAMENT PARTICIPANTS
+// ============================================================
+
+model TournamentParticipant {
+  id Int @id @default(autoincrement())
+
+  tournamentId Int @map("tournament_id")
+  playerId     Int @map("player_id")
+
+  role   ParticipantRole   @default(PLAYER)
+  status ParticipantStatus @default(ACTIVE)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  tournament Tournament    @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  player     PlayerProfile @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  teamMembership TeamMember?
+
+  captainOfTeam TournamentTeam? @relation("TeamCaptain")
+
+  selectedDraftPicks DraftPick[] @relation("DraftSelectedParticipant")
+
+  mvpGames Game[] @relation("GameMvp")
+  svpGames Game[] @relation("GameSvp")
+
+  @@unique([tournamentId, playerId])
+  @@index([tournamentId, status])
+  @@index([playerId])
+  @@map("tournament_participants")
+}
+
+// ============================================================
+// 06. TEAM TEMPLATE POOL
+// ============================================================
+
+model TeamTemplate {
+  id Int @id @default(autoincrement())
+
+  name      String @db.VarChar(100)
+  shortName String @unique @map("short_name") @db.VarChar(20)
+
+  logoUrl String? @map("logo_url") @db.Text
+  region  String? @db.VarChar(50)
+
+  enabled Boolean @default(true)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  tournamentTeams TournamentTeam[]
+
+  @@index([enabled])
+  @@map("team_templates")
+}
+
+// ============================================================
+// 07. TOURNAMENT TEAMS
+// ============================================================
+
+model TournamentTeam {
+  id Int @id @default(autoincrement())
+
+  tournamentId   Int  @map("tournament_id")
+  teamTemplateId Int? @map("team_template_id")
+
+  name      String  @db.VarChar(100)
+  shortName String? @map("short_name") @db.VarChar(20)
+  logoUrl   String? @map("logo_url") @db.Text
+
+  seed       Int?
+  draftOrder Int? @map("draft_order")
+
+  captainParticipantId Int? @unique @map("captain_participant_id")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  tournament Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+
+  teamTemplate TeamTemplate? @relation(fields: [teamTemplateId], references: [id], onDelete: SetNull)
+
+  captainParticipant TournamentParticipant? @relation("TeamCaptain", fields: [captainParticipantId], references: [id], onDelete: SetNull)
+
+  members    TeamMember[]
+  draftPicks DraftPick[]
+
+  currentInDraftSessions DraftSession[] @relation("DraftCurrentTeam")
+
+  teamAMatches Match[] @relation("MatchTeamA")
+  teamBMatches Match[] @relation("MatchTeamB")
+  wonMatches   Match[] @relation("MatchWinner")
+
+  wonGames Game[] @relation("GameWinner")
+
+  tournamentResults TournamentResult[]
+
+  @@unique([tournamentId, name])
+  @@unique([tournamentId, draftOrder])
+  @@index([tournamentId])
+  @@map("tournament_teams")
+}
+
+// ============================================================
+// 08. TEAM MEMBERS
+// ============================================================
+
+model TeamMember {
+  id Int @id @default(autoincrement())
+
+  teamId        Int @map("team_id")
+  participantId Int @unique @map("participant_id")
+
+  position PlayerRole?
+
+  joinedAt DateTime @default(now()) @map("joined_at") @db.Timestamptz(3)
+
+  team        TournamentTeam        @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  participant TournamentParticipant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+
+  @@index([teamId])
+  @@map("team_members")
+}
+
+// ============================================================
+// 09. DRAFT SESSION
+// ============================================================
+
+model DraftSession {
+  id Int @id @default(autoincrement())
+
+  tournamentId Int @map("tournament_id")
+
+  status DraftStatus @default(WAITING)
+
+  currentRound Int @default(1) @map("current_round")
+  currentPick  Int @default(1) @map("current_pick")
+
+  currentTeamId Int? @map("current_team_id")
+
+  pickDeadlineAt DateTime? @map("pick_deadline_at") @db.Timestamptz(3)
+
+  startedAt   DateTime? @map("started_at") @db.Timestamptz(3)
+  completedAt DateTime? @map("completed_at") @db.Timestamptz(3)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  tournament Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+
+  currentTeam TournamentTeam? @relation("DraftCurrentTeam", fields: [currentTeamId], references: [id], onDelete: SetNull)
+
+  picks DraftPick[]
+
+  @@index([tournamentId, status])
+  @@map("draft_sessions")
+}
+
+// ============================================================
+// 10. DRAFT PICKS
+// ============================================================
+
+model DraftPick {
+  id Int @id @default(autoincrement())
+
+  draftSessionId Int @map("draft_session_id")
+
+  round      Int
+  pickNumber Int @map("pick_number")
+
+  teamId        Int @map("team_id")
+  participantId Int @map("participant_id")
+
+  pickedByUserId Int? @map("picked_by_user_id")
+
+  pickedAt DateTime @default(now()) @map("picked_at") @db.Timestamptz(3)
+
+  draftSession DraftSession @relation(fields: [draftSessionId], references: [id], onDelete: Cascade)
+
+  team TournamentTeam @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  participant TournamentParticipant @relation("DraftSelectedParticipant", fields: [participantId], references: [id], onDelete: Cascade)
+
+  pickedBy User? @relation("DraftPickedBy", fields: [pickedByUserId], references: [id], onDelete: SetNull)
+
+  @@unique([draftSessionId, pickNumber])
+  @@unique([draftSessionId, participantId])
+  @@index([teamId])
+  @@map("draft_picks")
+}
+
+// ============================================================
+// 11. MATCH / SERIES
+// ============================================================
+
+model Match {
+  id Int @id @default(autoincrement())
+
+  tournamentId Int @map("tournament_id")
+
+  roundNumber Int @map("round_number")
+  matchNumber Int @map("match_number")
+
+  label String? @db.VarChar(100)
+
+  teamAId Int? @map("team_a_id")
+  teamBId Int? @map("team_b_id")
+
+  winnerTeamId Int? @map("winner_team_id")
+
+  format MatchFormat @default(BO3)
+
+  teamAScore Int @default(0) @map("team_a_score")
+  teamBScore Int @default(0) @map("team_b_score")
+
+  status MatchStatus @default(SCHEDULED)
+
+  scheduledAt DateTime? @map("scheduled_at") @db.Timestamptz(3)
+  startedAt   DateTime? @map("started_at") @db.Timestamptz(3)
+  completedAt DateTime? @map("completed_at") @db.Timestamptz(3)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  tournament Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+
+  teamA TournamentTeam? @relation("MatchTeamA", fields: [teamAId], references: [id], onDelete: SetNull)
+
+  teamB TournamentTeam? @relation("MatchTeamB", fields: [teamBId], references: [id], onDelete: SetNull)
+
+  winnerTeam TournamentTeam? @relation("MatchWinner", fields: [winnerTeamId], references: [id], onDelete: SetNull)
+
+  games Game[]
+
+  @@unique([tournamentId, roundNumber, matchNumber])
+  @@index([tournamentId, status])
+  @@index([scheduledAt])
+  @@map("matches")
+}
+
+// ============================================================
+// 12. INDIVIDUAL GAMES
+// ============================================================
+
+model Game {
+  id Int @id @default(autoincrement())
+
+  matchId    Int @map("match_id")
+  gameNumber Int @map("game_number")
+
+  winnerTeamId Int? @map("winner_team_id")
+
+  mvpParticipantId Int? @map("mvp_participant_id")
+  svpParticipantId Int? @map("svp_participant_id")
+
+  resultImageUrl String? @map("result_image_url") @db.Text
+
+  startedAt   DateTime? @map("started_at") @db.Timestamptz(3)
+  completedAt DateTime? @map("completed_at") @db.Timestamptz(3)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  match Match @relation(fields: [matchId], references: [id], onDelete: Cascade)
+
+  winnerTeam TournamentTeam? @relation("GameWinner", fields: [winnerTeamId], references: [id], onDelete: SetNull)
+
+  mvpParticipant TournamentParticipant? @relation("GameMvp", fields: [mvpParticipantId], references: [id], onDelete: SetNull)
+
+  svpParticipant TournamentParticipant? @relation("GameSvp", fields: [svpParticipantId], references: [id], onDelete: SetNull)
+
+  pointTransactions PointTransaction[]
+
+  @@unique([matchId, gameNumber])
+  @@index([winnerTeamId])
+  @@map("games")
+}
+
+// ============================================================
+// 13. TOURNAMENT RESULTS
+// ============================================================
+
+model TournamentResult {
+  id Int @id @default(autoincrement())
+
+  tournamentId Int @map("tournament_id")
+  teamId       Int @map("team_id")
+
+  placement  Int
+  isChampion Boolean @default(false) @map("is_champion")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  tournament Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+
+  team TournamentTeam @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([tournamentId, teamId])
+  @@index([tournamentId, placement])
+  @@map("tournament_results")
+}
+
+// ============================================================
+// 14. PLAYER GLOBAL STATS
+// ============================================================
+
+model PlayerStats {
+  playerId Int @id @map("player_id")
+
+  points Int @default(0)
+
+  tournamentsPlayed Int @default(0) @map("tournaments_played")
+  seriesPlayed      Int @default(0) @map("series_played")
+  gamesPlayed       Int @default(0) @map("games_played")
+
+  wins   Int @default(0)
+  losses Int @default(0)
+
+  championships Int @default(0)
+
+  mvpCount Int @default(0) @map("mvp_count")
+  svpCount Int @default(0) @map("svp_count")
+
+  currentWinStreak Int @default(0) @map("current_win_streak")
+  bestWinStreak    Int @default(0) @map("best_win_streak")
+
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  player PlayerProfile @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  @@index([points])
+  @@index([championships])
+  @@index([mvpCount])
+  @@index([wins])
+  @@map("player_stats")
+}
+
+// ============================================================
+// 15. PLAYER ROLE RATINGS
+// ============================================================
+
+model PlayerRoleRating {
+  id Int @id @default(autoincrement())
+
+  playerId Int        @map("player_id")
+  role     PlayerRole
+
+  rating Int @default(0)
+
+  gamesPlayed Int @default(0) @map("games_played")
+  wins        Int @default(0)
+  losses      Int @default(0)
+
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  player PlayerProfile @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  @@unique([playerId, role])
+  @@index([role, rating])
+  @@map("player_role_ratings")
+}
+
+// ============================================================
+// 16. POINT LEDGER
+// ============================================================
+
+model PointTransaction {
+  id Int @id @default(autoincrement())
+
+  playerId Int @map("player_id")
+
+  tournamentId Int? @map("tournament_id")
+  gameId       Int? @map("game_id")
+
+  type PointEventType
+
+  amount       Int
+  balanceAfter Int @map("balance_after")
+
+  reason String? @db.Text
+
+  createdByUserId Int? @map("created_by_user_id")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  player PlayerProfile @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  tournament Tournament? @relation(fields: [tournamentId], references: [id], onDelete: SetNull)
+
+  game Game? @relation(fields: [gameId], references: [id], onDelete: SetNull)
+
+  createdBy User? @relation("PointTransactionCreator", fields: [createdByUserId], references: [id], onDelete: SetNull)
+
+  @@index([playerId, createdAt])
+  @@index([tournamentId])
+  @@index([type])
+  @@map("point_transactions")
+}
+
+// ============================================================
+// 17. SCORING RULES
+// ============================================================
+
+model ScoringRule {
+  id Int @id @default(autoincrement())
+
+  type PointEventType @unique
+
+  points  Int
+  enabled Boolean @default(true)
+
+  description String? @db.Text
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@map("scoring_rules")
+}
+
+// ============================================================
+// 18. AUDIT LOG
+// ============================================================
+
+model AuditLog {
+  id Int @id @default(autoincrement())
+
+  userId Int? @map("user_id")
+
+  action     String  @db.VarChar(100)
+  entityType String  @map("entity_type") @db.VarChar(100)
+  entityId   String? @map("entity_id") @db.VarChar(100)
+
+  oldValue Json? @map("old_value")
+  newValue Json? @map("new_value")
+
+  ipAddress String? @map("ip_address") @db.VarChar(64)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+// ============================================================
+// 19. SYSTEM SETTINGS
+// ============================================================
+
+model SystemSetting {
+  key String @id @db.VarChar(100)
+
+  value Json
+
+  description String? @db.Text
+
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@map("system_settings")
+}
