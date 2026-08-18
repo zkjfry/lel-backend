@@ -136,9 +136,12 @@ export class SettlementService {
                             );
                         }
 
-                        if (tournament.results.length !== 4) {
+                        if (
+                            tournament.results.length !==
+                            tournament.teamCount
+                        ) {
                             throw new BadRequestException(
-                                'Tournament results are incomplete',
+                                `Tournament results are incomplete: expected ${tournament.teamCount}, found ${tournament.results.length}`,
                             );
                         }
 
