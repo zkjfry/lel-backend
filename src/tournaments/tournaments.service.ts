@@ -775,6 +775,9 @@ export class TournamentsService {
             [TournamentStatus.REGISTRATION_CLOSED]: [
 
                 TournamentStatus
+                    .REGISTRATION_OPEN,
+
+                TournamentStatus
                     .CANCELLED,
 
             ],
