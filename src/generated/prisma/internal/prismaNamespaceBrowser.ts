@@ -139,6 +139,7 @@ export const TournamentScalarFieldEnum = {
   startTime: 'startTime',
   maxPlayers: 'maxPlayers',
   maxWaitlist: 'maxWaitlist',
+  registrationPasswordHash: 'registrationPasswordHash',
   teamCount: 'teamCount',
   playersPerTeam: 'playersPerTeam',
   matchFormat: 'matchFormat',

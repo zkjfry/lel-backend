@@ -35,6 +35,16 @@ export class CreateTournamentDto {
 
 
     /* =========================================================
+       REGISTRATION PASSWORD
+    ========================================================= */
+
+    @IsString()
+    @MinLength(4)
+    @MaxLength(32)
+    registrationPassword: string;
+
+
+    /* =========================================================
        REGISTRATION
     ========================================================= */
 
@@ -76,20 +86,6 @@ export class CreateTournamentDto {
 
     /* =========================================================
        TOURNAMENT SIZE
-
-       LEL rules:
-
-       - exactly 5 players per team
-       - team count must be even
-       - max players must be a multiple of 10
-       - maxPlayers = teamCount × playersPerTeam
-
-       Valid examples:
-
-       10 players / 2 teams
-       20 players / 4 teams
-       30 players / 6 teams
-       40 players / 8 teams
     ========================================================= */
 
     @IsOptional()

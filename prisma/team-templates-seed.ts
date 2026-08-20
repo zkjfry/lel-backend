@@ -1,117 +1,298 @@
 import 'dotenv/config';
 
-import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient } from '../src/generated/prisma/client';
+import {
+  PrismaPg,
+} from '@prisma/adapter-pg';
+
+import {
+  PrismaClient,
+} from '../src/generated/prisma/client';
+
+
+/* =========================================================
+   LEL TEAM TEMPLATE POOL
+
+   V1 currently uses exactly these four official teams:
+
+   YY
+   ORZ
+   VNR
+   FNG
+
+   Old templates are not deleted because historical
+   tournaments may still reference them. They are disabled
+   instead.
+========================================================= */
 
 const templates = [
   {
-    name: 'T1',
-    shortName: 'T1',
-    region: 'KR',
+    name:
+      'YY',
+
+    shortName:
+      'YY',
+
+    logoUrl:
+      '/team-logos/yy.png',
+
+    region:
+      'LEL',
   },
+
   {
-    name: 'Gen.G',
-    shortName: 'GEN',
-    region: 'KR',
+    name:
+      'ORZ',
+
+    shortName:
+      'ORZ',
+
+    logoUrl:
+      '/team-logos/orz.png',
+
+    region:
+      'LEL',
   },
+
   {
-    name: 'Bilibili Gaming',
-    shortName: 'BLG',
-    region: 'CN',
+    name:
+      'VNR',
+
+    shortName:
+      'VNR',
+
+    logoUrl:
+      '/team-logos/vnr.jpg',
+
+    region:
+      'LEL',
   },
+
   {
-    name: 'G2 Esports',
-    shortName: 'G2',
-    region: 'EU',
-  },
-  {
-    name: 'Top Esports',
-    shortName: 'TES',
-    region: 'CN',
-  },
-  {
-    name: 'Dplus KIA',
-    shortName: 'DK',
-    region: 'KR',
-  },
-  {
-    name: 'Hanwha Life Esports',
-    shortName: 'HLE',
-    region: 'KR',
-  },
-  {
-    name: 'Cloud9',
-    shortName: 'C9',
-    region: 'NA',
+    name:
+      'FNG',
+
+    shortName:
+      'FNG',
+
+    logoUrl:
+      '/team-logos/fng.jpg',
+
+    region:
+      'LEL',
   },
 ];
 
+
+/* =========================================================
+   MAIN
+========================================================= */
+
 async function main() {
+
   const databaseUrl =
     process.env.DATABASE_URL;
 
+
   if (!databaseUrl) {
+
     throw new Error(
       'DATABASE_URL is not configured',
     );
+
   }
 
-  const adapter = new PrismaPg({
-    connectionString:
-      databaseUrl,
-  });
+
+  const adapter =
+    new PrismaPg({
+      connectionString:
+        databaseUrl,
+    });
+
 
   const prisma =
     new PrismaClient({
       adapter,
     });
 
+
   try {
+
+    /* =====================================================
+       STEP 1
+       Disable every existing template.
+
+       We deliberately do NOT delete old templates because
+       TournamentTeam may still reference them.
+    ===================================================== */
+
+    await prisma.teamTemplate.updateMany({
+      data: {
+        enabled:
+          false,
+      },
+    });
+
+
+    /* =====================================================
+       STEP 2
+       Create/update the four official LEL teams.
+    ===================================================== */
+
     for (
-      const template of templates
+      const template
+      of templates
     ) {
+
       await prisma.teamTemplate.upsert({
+
         where: {
           shortName:
             template.shortName,
         },
 
+
         update: {
+
           name:
             template.name,
+
+          logoUrl:
+            template.logoUrl,
 
           region:
             template.region,
 
-          enabled: true,
+          enabled:
+            true,
+
         },
 
+
         create: {
+
           name:
             template.name,
 
           shortName:
             template.shortName,
 
+          logoUrl:
+            template.logoUrl,
+
           region:
             template.region,
 
-          enabled: true,
+          enabled:
+            true,
+
         },
+
       });
+
+
+      console.log(
+        `Team template ready: ${template.shortName}`,
+      );
+
     }
 
+
+    /* =====================================================
+       STEP 3
+       Print enabled templates for verification.
+    ===================================================== */
+
+    const enabledTemplates =
+      await prisma.teamTemplate.findMany({
+
+        where: {
+          enabled:
+            true,
+        },
+
+        orderBy: {
+          id:
+            'asc',
+        },
+
+        select: {
+
+          id:
+            true,
+
+          name:
+            true,
+
+          shortName:
+            true,
+
+          logoUrl:
+            true,
+
+          region:
+            true,
+
+          enabled:
+            true,
+
+        },
+
+      });
+
+
     console.log(
-      `${templates.length} team templates ready.`,
+      '',
     );
-  } finally {
-    await prisma.$disconnect();
+
+    console.log(
+      '========================================',
+    );
+
+    console.log(
+      'Enabled LEL team templates:',
+    );
+
+    console.table(
+      enabledTemplates,
+    );
+
+    console.log(
+      '========================================',
+    );
+
+    console.log(
+      `${enabledTemplates.length} official teams enabled.`,
+    );
+
   }
+  finally {
+
+    await prisma.$disconnect();
+
+  }
+
 }
 
-main().catch(
-  (error) => {
-    console.error(error);
-    process.exit(1);
-  },
-);
+
+/* =========================================================
+   RUN
+========================================================= */
+
+main()
+  .catch(
+    (
+      error,
+    ) => {
+
+      console.error(
+        'Failed to seed team templates:',
+        error,
+      );
+
+
+      process.exit(
+        1,
+      );
+
+    },
+  );

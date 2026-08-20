@@ -30,6 +30,8 @@ import {
     UpdateTournamentStatusDto,
 } from './dto/update-tournament-status.dto';
 
+import * as bcrypt from 'bcrypt';
+
 
 @Injectable()
 export class TournamentsService {
@@ -85,101 +87,130 @@ export class TournamentsService {
         const slug =
             this.generateSlug();
 
-
-        return this.prisma.tournament.create({
-
-            data: {
-
-                name:
-                    dto.name.trim(),
-
-                slug,
-
-                description:
-                    dto.description?.trim(),
+        const registrationPassword =
+            dto.registrationPassword.trim();
 
 
-                registrationStart:
-                    dto.registrationStart
-                        ? new Date(
-                            dto.registrationStart,
-                        )
-                        : undefined,
+        if (
+            registrationPassword.length < 4
+            ||
+            registrationPassword.length > 32
+        ) {
+
+            throw new BadRequestException(
+                'Registration password must be between 4 and 32 characters',
+            );
+
+        }
 
 
-                registrationEnd:
-                    dto.registrationEnd
-                        ? new Date(
-                            dto.registrationEnd,
-                        )
-                        : undefined,
+        const registrationPasswordHash =
+            await bcrypt.hash(
+                registrationPassword,
+                12,
+            );
 
 
-                checkinStart:
-                    dto.checkinStart
-                        ? new Date(
-                            dto.checkinStart,
-                        )
-                        : undefined,
+        const created =
+            await this.prisma.tournament.create({
+
+                data: {
+
+                    name:
+                        dto.name.trim(),
+
+                    slug,
+
+                    description:
+                        dto.description?.trim(),
+                    registrationPasswordHash,
 
 
-                checkinEnd:
-                    dto.checkinEnd
-                        ? new Date(
-                            dto.checkinEnd,
-                        )
-                        : undefined,
+                    registrationStart:
+                        dto.registrationStart
+                            ? new Date(
+                                dto.registrationStart,
+                            )
+                            : undefined,
 
 
-                startTime:
-                    dto.startTime
-                        ? new Date(
-                            dto.startTime,
-                        )
-                        : undefined,
+                    registrationEnd:
+                        dto.registrationEnd
+                            ? new Date(
+                                dto.registrationEnd,
+                            )
+                            : undefined,
 
 
-                maxPlayers,
-
-                maxWaitlist,
-
-                teamCount,
-
-                playersPerTeam,
-
-
-                matchFormat:
-                    dto.matchFormat ??
-                    'BO3',
+                    checkinStart:
+                        dto.checkinStart
+                            ? new Date(
+                                dto.checkinStart,
+                            )
+                            : undefined,
 
 
-                tournamentFormat:
-                    dto.tournamentFormat ??
-                    'SINGLE_ELIMINATION',
+                    checkinEnd:
+                        dto.checkinEnd
+                            ? new Date(
+                                dto.checkinEnd,
+                            )
+                            : undefined,
 
 
-                createdById,
+                    startTime:
+                        dto.startTime
+                            ? new Date(
+                                dto.startTime,
+                            )
+                            : undefined,
 
-            },
+
+                    maxPlayers,
+
+                    maxWaitlist,
+
+                    teamCount,
+
+                    playersPerTeam,
 
 
-            include: {
+                    matchFormat:
+                        dto.matchFormat ??
+                        'BO3',
 
-                createdBy: {
 
-                    select: {
+                    tournamentFormat:
+                        dto.tournamentFormat ??
+                        'SINGLE_ELIMINATION',
 
-                        id: true,
 
-                        username: true,
+                    createdById,
+
+                },
+
+
+                include: {
+
+                    createdBy: {
+
+                        select: {
+
+                            id: true,
+
+                            username: true,
+
+                        },
 
                     },
 
                 },
 
-            },
+            });
 
-        });
+        return this.toPublicTournament(
+            created,
+        );
 
     }
 
@@ -190,44 +221,54 @@ export class TournamentsService {
 
     async findAll() {
 
-        return this.prisma.tournament.findMany({
+        const tournaments =
+            await this.prisma.tournament.findMany({
 
-            orderBy: {
+                orderBy: {
 
-                createdAt:
-                    'desc',
+                    createdAt:
+                        'desc',
 
-            },
+                },
 
 
-            include: {
+                include: {
 
-                _count: {
+                    _count: {
 
-                    select: {
+                        select: {
 
-                        registrations: {
-                            where: {
-                                status: 'REGISTERED',
+                            registrations: {
+                                where: {
+                                    status: 'REGISTERED',
+                                },
                             },
+
+                            participants:
+                                true,
+
+                            teams:
+                                true,
+
+                            matches:
+                                true,
+
                         },
-
-                        participants:
-                            true,
-
-                        teams:
-                            true,
-
-                        matches:
-                            true,
 
                     },
 
                 },
 
-            },
+            });
 
-        });
+        return tournaments.map(
+            (
+                tournament,
+            ) =>
+                this.toPublicTournament(
+                    tournament,
+                ),
+        );
 
     }
 
@@ -464,7 +505,9 @@ export class TournamentsService {
         }
 
 
-        return tournament;
+        return this.toPublicTournament(
+            tournament,
+        );
 
     }
 
@@ -512,89 +555,92 @@ export class TournamentsService {
         );
 
 
-        return this.prisma.tournament.update({
+        const updated =
+            await this.prisma.tournament.update({
 
-            where: {
-                id,
-            },
-
-
-            data: {
-
-                name:
-                    dto.name?.trim(),
+                where: {
+                    id,
+                },
 
 
-                description:
-                    dto.description !== undefined
-                        ? dto.description.trim()
-                        : undefined,
+                data: {
+
+                    name:
+                        dto.name?.trim(),
 
 
-                registrationStart:
-                    dto.registrationStart !== undefined
-                        ? new Date(
-                            dto.registrationStart,
-                        )
-                        : undefined,
+                    description:
+                        dto.description !== undefined
+                            ? dto.description.trim()
+                            : undefined,
 
 
-                registrationEnd:
-                    dto.registrationEnd !== undefined
-                        ? new Date(
-                            dto.registrationEnd,
-                        )
-                        : undefined,
+                    registrationStart:
+                        dto.registrationStart !== undefined
+                            ? new Date(
+                                dto.registrationStart,
+                            )
+                            : undefined,
 
 
-                checkinStart:
-                    dto.checkinStart !== undefined
-                        ? new Date(
-                            dto.checkinStart,
-                        )
-                        : undefined,
+                    registrationEnd:
+                        dto.registrationEnd !== undefined
+                            ? new Date(
+                                dto.registrationEnd,
+                            )
+                            : undefined,
 
 
-                checkinEnd:
-                    dto.checkinEnd !== undefined
-                        ? new Date(
-                            dto.checkinEnd,
-                        )
-                        : undefined,
+                    checkinStart:
+                        dto.checkinStart !== undefined
+                            ? new Date(
+                                dto.checkinStart,
+                            )
+                            : undefined,
 
 
-                startTime:
-                    dto.startTime !== undefined
-                        ? new Date(
-                            dto.startTime,
-                        )
-                        : undefined,
+                    checkinEnd:
+                        dto.checkinEnd !== undefined
+                            ? new Date(
+                                dto.checkinEnd,
+                            )
+                            : undefined,
 
 
-                maxPlayers:
-                    dto.maxPlayers,
-
-                maxWaitlist:
-                    dto.maxWaitlist,
-
-                teamCount:
-                    dto.teamCount,
-
-                playersPerTeam:
-                    dto.playersPerTeam,
+                    startTime:
+                        dto.startTime !== undefined
+                            ? new Date(
+                                dto.startTime,
+                            )
+                            : undefined,
 
 
-                matchFormat:
-                    dto.matchFormat,
+                    maxPlayers:
+                        dto.maxPlayers,
+
+                    maxWaitlist:
+                        dto.maxWaitlist,
+
+                    teamCount:
+                        dto.teamCount,
+
+                    playersPerTeam:
+                        dto.playersPerTeam,
 
 
-                tournamentFormat:
-                    dto.tournamentFormat,
+                    matchFormat:
+                        dto.matchFormat,
 
-            },
 
-        });
+                    tournamentFormat:
+                        dto.tournamentFormat,
 
+                },
+
+            });
+        return this.toPublicTournament(
+            updated,
+        );
     }
 
 
@@ -712,7 +758,9 @@ export class TournamentsService {
                 );
 
 
-                return updated;
+                return this.toPublicTournament(
+                    updated,
+                );
 
             },
 
@@ -992,6 +1040,45 @@ export class TournamentsService {
         return (
             `lel-${timestamp}-${random}`
         );
+
+    }
+
+    /* =========================================================
+   PUBLIC TOURNAMENT RESPONSE
+
+   registrationPasswordHash must NEVER be returned
+   to the browser.
+
+   Frontend only needs to know whether a password exists.
+========================================================= */
+
+    private toPublicTournament<
+        T extends {
+            registrationPasswordHash:
+            string | null;
+        },
+    >(
+        tournament:
+            T,
+    ) {
+
+        const {
+            registrationPasswordHash,
+            ...publicTournament
+        } =
+            tournament;
+
+
+        return {
+
+            ...publicTournament,
+
+            registrationPasswordRequired:
+                Boolean(
+                    registrationPasswordHash,
+                ),
+
+        };
 
     }
 

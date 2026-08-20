@@ -218,6 +218,10 @@ model Tournament {
   maxPlayers  Int @default(20) @map("max_players")
   maxWaitlist Int @default(5) @map("max_waitlist")
 
+  // Only the bcrypt hash is stored.
+  // Never expose this field through public APIs.
+  registrationPasswordHash String? @map("registration_password_hash") @db.VarChar(100)
+
   teamCount      Int @default(4) @map("team_count")
   playersPerTeam Int @default(5) @map("players_per_team")
 

@@ -5,6 +5,8 @@ import {
     NotFoundException,
 } from '@nestjs/common';
 
+import * as bcrypt from 'bcrypt';
+
 import { Prisma } from '../generated/prisma/client';
 import {
     ParticipantRole,
@@ -15,6 +17,10 @@ import {
 
 import { PrismaService } from '../prisma/prisma.service';
 
+import {
+    RegisterTournamentDto,
+} from './dto/register-tournament.dto';
+
 @Injectable()
 export class RegistrationsService {
     constructor(private readonly prisma: PrismaService) { }
@@ -23,188 +29,407 @@ export class RegistrationsService {
     // PLAYER: REGISTER
     // ============================================================
 
-    async register(tournamentId: number, userId: number) {
-        for (let attempt = 1; attempt <= 3; attempt++) {
+    // ============================================================
+    // PLAYER: REGISTER
+    // ============================================================
+
+    async register(
+        tournamentId: number,
+        userId: number,
+        dto: RegisterTournamentDto,
+    ) {
+
+        for (
+            let attempt = 1;
+            attempt <= 3;
+            attempt++
+        ) {
+
             try {
+
                 return await this.prisma.$transaction(
+
                     async (tx) => {
+
+                        /* =========================================
+                           TOURNAMENT
+                        ========================================= */
+
                         const tournament =
                             await tx.tournament.findUnique({
-                                where: { id: tournamentId },
+                                where: {
+                                    id: tournamentId,
+                                },
                             });
 
+
                         if (!tournament) {
+
                             throw new NotFoundException(
                                 'Tournament not found',
                             );
+
                         }
+
 
                         if (
                             tournament.status !==
                             TournamentStatus.REGISTRATION_OPEN
                         ) {
+
                             throw new BadRequestException(
                                 'Tournament registration is not open',
                             );
+
                         }
+
+
+                        /* =========================================
+                           REGISTRATION PASSWORD
+                        ========================================= */
+
+                        if (
+                            tournament.registrationPasswordHash
+                        ) {
+
+                            const suppliedPassword =
+                                dto.password?.trim();
+
+
+                            if (!suppliedPassword) {
+
+                                throw new BadRequestException(
+                                    'Registration password is required',
+                                );
+
+                            }
+
+
+                            const passwordMatches =
+                                await bcrypt.compare(
+                                    suppliedPassword,
+                                    tournament.registrationPasswordHash,
+                                );
+
+
+                            if (!passwordMatches) {
+
+                                throw new BadRequestException(
+                                    'Invalid registration password',
+                                );
+
+                            }
+
+                        }
+
+
+                        /* =========================================
+                           PLAYER
+                        ========================================= */
 
                         const player =
                             await tx.playerProfile.findUnique({
-                                where: { userId },
+                                where: {
+                                    userId,
+                                },
                             });
 
+
                         if (!player) {
+
                             throw new NotFoundException(
                                 'Player profile not found',
                             );
+
                         }
 
+
                         if (!player.mainRole) {
+
                             throw new BadRequestException(
                                 'Please set your main role before registering',
                             );
+
                         }
+
+
+                        /*
+                         * Rank confirmation rule from Step 2.
+                         */
+                        if (!player.rankTier) {
+
+                            throw new BadRequestException(
+                                '请先设置当前段位后再报名赛事',
+                            );
+
+                        }
+
+
+                        if (!player.rankConfirmedAt) {
+
+                            throw new BadRequestException(
+                                '请先确认当前段位后再报名赛事',
+                            );
+
+                        }
+
+
+                        /* =========================================
+                           EXISTING REGISTRATION
+                        ========================================= */
 
                         const existing =
                             await tx.tournamentRegistration.findFirst({
                                 where: {
                                     tournamentId,
-                                    playerId: player.id,
+                                    playerId:
+                                        player.id,
                                 },
                             });
 
+
                         if (
-                            existing &&
+                            existing
+                            &&
                             (
                                 existing.status ===
-                                RegistrationStatus.REGISTERED ||
+                                RegistrationStatus.REGISTERED
+                                ||
                                 existing.status ===
                                 RegistrationStatus.WAITLIST
                             )
                         ) {
+
                             throw new ConflictException(
                                 'You are already registered for this tournament',
                             );
+
                         }
+
+
+                        /* =========================================
+                           CAPACITY
+                        ========================================= */
 
                         const registeredCount =
                             await tx.tournamentRegistration.count({
+
                                 where: {
+
                                     tournamentId,
+
                                     status:
                                         RegistrationStatus.REGISTERED,
+
                                 },
+
                             });
 
-                        let status: RegistrationStatus;
-                        let waitlistPosition: number | null = null;
+
+                        let status:
+                            RegistrationStatus;
+
+                        let waitlistPosition:
+                            number | null = null;
+
 
                         if (
                             registeredCount <
                             tournament.maxPlayers
                         ) {
+
                             status =
                                 RegistrationStatus.REGISTERED;
-                        } else {
+
+                        }
+                        else {
+
                             const waitlistCount =
                                 await tx.tournamentRegistration.count({
+
                                     where: {
+
                                         tournamentId,
+
                                         status:
                                             RegistrationStatus.WAITLIST,
+
                                     },
+
                                 });
+
 
                             if (
                                 waitlistCount >=
                                 tournament.maxWaitlist
                             ) {
+
                                 throw new ConflictException(
                                     'Tournament and waitlist are full',
                                 );
+
                             }
+
 
                             const maxPosition =
                                 await tx.tournamentRegistration.aggregate({
+
                                     where: {
+
                                         tournamentId,
+
                                         status:
                                             RegistrationStatus.WAITLIST,
+
                                     },
+
 
                                     _max: {
-                                        waitlistPosition: true,
+                                        waitlistPosition:
+                                            true,
                                     },
+
                                 });
 
+
                             waitlistPosition =
-                                (maxPosition._max.waitlistPosition ?? 0) +
+                                (
+                                    maxPosition
+                                        ._max
+                                        .waitlistPosition
+                                    ??
+                                    0
+                                )
+                                +
                                 1;
+
 
                             status =
                                 RegistrationStatus.WAITLIST;
+
                         }
 
+
+                        /* =========================================
+                           CREATE / RESTORE REGISTRATION
+                        ========================================= */
+
                         const data = {
+
                             status,
-                            primaryRole: player.mainRole,
-                            secondaryRole: player.secondaryRole,
-                            checkedIn: false,
-                            checkedInAt: null,
+
+                            primaryRole:
+                                player.mainRole,
+
+                            secondaryRole:
+                                player.secondaryRole,
+
+                            checkedIn:
+                                false,
+
+                            checkedInAt:
+                                null,
+
                             waitlistPosition,
-                            registeredAt: new Date(),
+
+                            registeredAt:
+                                new Date(),
+
                         };
 
+
                         if (existing) {
+
                             return tx.tournamentRegistration.update({
+
                                 where: {
-                                    id: existing.id,
+                                    id:
+                                        existing.id,
                                 },
+
 
                                 data,
 
+
+                                /*
+                                 * Do NOT include tournament here.
+                                 * Tournament contains the password hash.
+                                 */
                                 include: {
-                                    player: true,
-                                    tournament: true,
+                                    player:
+                                        true,
                                 },
+
                             });
+
                         }
 
+
                         return tx.tournamentRegistration.create({
+
                             data: {
+
                                 tournamentId,
-                                playerId: player.id,
+
+                                playerId:
+                                    player.id,
+
                                 ...data,
+
                             },
 
+
+                            /*
+                             * Do NOT include tournament here.
+                             */
                             include: {
-                                player: true,
-                                tournament: true,
+                                player:
+                                    true,
                             },
+
                         });
+
                     },
+
 
                     {
                         isolationLevel:
-                            Prisma.TransactionIsolationLevel
+                            Prisma
+                                .TransactionIsolationLevel
                                 .Serializable,
                     },
+
                 );
-            } catch (error) {
+
+            }
+            catch (
+            error
+            ) {
+
                 if (
-                    this.isTransactionConflict(error) &&
+                    this.isTransactionConflict(
+                        error,
+                    )
+                    &&
                     attempt < 3
                 ) {
+
                     continue;
+
                 }
 
+
                 throw error;
+
             }
+
         }
+
 
         throw new ConflictException(
             'Registration conflict, please try again',
         );
+
     }
 
     // ============================================================
@@ -231,10 +456,6 @@ export class RegistrationsService {
                 where: {
                     tournamentId,
                     playerId: player.id,
-                },
-
-                include: {
-                    tournament: true,
                 },
             });
 

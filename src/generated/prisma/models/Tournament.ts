@@ -57,6 +57,7 @@ export type TournamentMinAggregateOutputType = {
   startTime: Date | null
   maxPlayers: number | null
   maxWaitlist: number | null
+  registrationPasswordHash: string | null
   teamCount: number | null
   playersPerTeam: number | null
   matchFormat: $Enums.MatchFormat | null
@@ -80,6 +81,7 @@ export type TournamentMaxAggregateOutputType = {
   startTime: Date | null
   maxPlayers: number | null
   maxWaitlist: number | null
+  registrationPasswordHash: string | null
   teamCount: number | null
   playersPerTeam: number | null
   matchFormat: $Enums.MatchFormat | null
@@ -103,6 +105,7 @@ export type TournamentCountAggregateOutputType = {
   startTime: number
   maxPlayers: number
   maxWaitlist: number
+  registrationPasswordHash: number
   teamCount: number
   playersPerTeam: number
   matchFormat: number
@@ -146,6 +149,7 @@ export type TournamentMinAggregateInputType = {
   startTime?: true
   maxPlayers?: true
   maxWaitlist?: true
+  registrationPasswordHash?: true
   teamCount?: true
   playersPerTeam?: true
   matchFormat?: true
@@ -169,6 +173,7 @@ export type TournamentMaxAggregateInputType = {
   startTime?: true
   maxPlayers?: true
   maxWaitlist?: true
+  registrationPasswordHash?: true
   teamCount?: true
   playersPerTeam?: true
   matchFormat?: true
@@ -192,6 +197,7 @@ export type TournamentCountAggregateInputType = {
   startTime?: true
   maxPlayers?: true
   maxWaitlist?: true
+  registrationPasswordHash?: true
   teamCount?: true
   playersPerTeam?: true
   matchFormat?: true
@@ -302,6 +308,7 @@ export type TournamentGroupByOutputType = {
   startTime: Date | null
   maxPlayers: number
   maxWaitlist: number
+  registrationPasswordHash: string | null
   teamCount: number
   playersPerTeam: number
   matchFormat: $Enums.MatchFormat
@@ -348,6 +355,7 @@ export type TournamentWhereInput = {
   startTime?: Prisma.DateTimeNullableFilter<"Tournament"> | Date | string | null
   maxPlayers?: Prisma.IntFilter<"Tournament"> | number
   maxWaitlist?: Prisma.IntFilter<"Tournament"> | number
+  registrationPasswordHash?: Prisma.StringNullableFilter<"Tournament"> | string | null
   teamCount?: Prisma.IntFilter<"Tournament"> | number
   playersPerTeam?: Prisma.IntFilter<"Tournament"> | number
   matchFormat?: Prisma.EnumMatchFormatFilter<"Tournament"> | $Enums.MatchFormat
@@ -379,6 +387,7 @@ export type TournamentOrderByWithRelationInput = {
   startTime?: Prisma.SortOrderInput | Prisma.SortOrder
   maxPlayers?: Prisma.SortOrder
   maxWaitlist?: Prisma.SortOrder
+  registrationPasswordHash?: Prisma.SortOrderInput | Prisma.SortOrder
   teamCount?: Prisma.SortOrder
   playersPerTeam?: Prisma.SortOrder
   matchFormat?: Prisma.SortOrder
@@ -413,6 +422,7 @@ export type TournamentWhereUniqueInput = Prisma.AtLeast<{
   startTime?: Prisma.DateTimeNullableFilter<"Tournament"> | Date | string | null
   maxPlayers?: Prisma.IntFilter<"Tournament"> | number
   maxWaitlist?: Prisma.IntFilter<"Tournament"> | number
+  registrationPasswordHash?: Prisma.StringNullableFilter<"Tournament"> | string | null
   teamCount?: Prisma.IntFilter<"Tournament"> | number
   playersPerTeam?: Prisma.IntFilter<"Tournament"> | number
   matchFormat?: Prisma.EnumMatchFormatFilter<"Tournament"> | $Enums.MatchFormat
@@ -444,6 +454,7 @@ export type TournamentOrderByWithAggregationInput = {
   startTime?: Prisma.SortOrderInput | Prisma.SortOrder
   maxPlayers?: Prisma.SortOrder
   maxWaitlist?: Prisma.SortOrder
+  registrationPasswordHash?: Prisma.SortOrderInput | Prisma.SortOrder
   teamCount?: Prisma.SortOrder
   playersPerTeam?: Prisma.SortOrder
   matchFormat?: Prisma.SortOrder
@@ -475,6 +486,7 @@ export type TournamentScalarWhereWithAggregatesInput = {
   startTime?: Prisma.DateTimeNullableWithAggregatesFilter<"Tournament"> | Date | string | null
   maxPlayers?: Prisma.IntWithAggregatesFilter<"Tournament"> | number
   maxWaitlist?: Prisma.IntWithAggregatesFilter<"Tournament"> | number
+  registrationPasswordHash?: Prisma.StringNullableWithAggregatesFilter<"Tournament"> | string | null
   teamCount?: Prisma.IntWithAggregatesFilter<"Tournament"> | number
   playersPerTeam?: Prisma.IntWithAggregatesFilter<"Tournament"> | number
   matchFormat?: Prisma.EnumMatchFormatWithAggregatesFilter<"Tournament"> | $Enums.MatchFormat
@@ -497,6 +509,7 @@ export type TournamentCreateInput = {
   startTime?: Date | string | null
   maxPlayers?: number
   maxWaitlist?: number
+  registrationPasswordHash?: string | null
   teamCount?: number
   playersPerTeam?: number
   matchFormat?: $Enums.MatchFormat
@@ -527,6 +540,7 @@ export type TournamentUncheckedCreateInput = {
   startTime?: Date | string | null
   maxPlayers?: number
   maxWaitlist?: number
+  registrationPasswordHash?: string | null
   teamCount?: number
   playersPerTeam?: number
   matchFormat?: $Enums.MatchFormat
@@ -556,6 +570,7 @@ export type TournamentUpdateInput = {
   startTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxPlayers?: Prisma.IntFieldUpdateOperationsInput | number
   maxWaitlist?: Prisma.IntFieldUpdateOperationsInput | number
+  registrationPasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamCount?: Prisma.IntFieldUpdateOperationsInput | number
   playersPerTeam?: Prisma.IntFieldUpdateOperationsInput | number
   matchFormat?: Prisma.EnumMatchFormatFieldUpdateOperationsInput | $Enums.MatchFormat
@@ -586,6 +601,7 @@ export type TournamentUncheckedUpdateInput = {
   startTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxPlayers?: Prisma.IntFieldUpdateOperationsInput | number
   maxWaitlist?: Prisma.IntFieldUpdateOperationsInput | number
+  registrationPasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamCount?: Prisma.IntFieldUpdateOperationsInput | number
   playersPerTeam?: Prisma.IntFieldUpdateOperationsInput | number
   matchFormat?: Prisma.EnumMatchFormatFieldUpdateOperationsInput | $Enums.MatchFormat
@@ -616,6 +632,7 @@ export type TournamentCreateManyInput = {
   startTime?: Date | string | null
   maxPlayers?: number
   maxWaitlist?: number
+  registrationPasswordHash?: string | null
   teamCount?: number
   playersPerTeam?: number
   matchFormat?: $Enums.MatchFormat
@@ -638,6 +655,7 @@ export type TournamentUpdateManyMutationInput = {
   startTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxPlayers?: Prisma.IntFieldUpdateOperationsInput | number
   maxWaitlist?: Prisma.IntFieldUpdateOperationsInput | number
+  registrationPasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamCount?: Prisma.IntFieldUpdateOperationsInput | number
   playersPerTeam?: Prisma.IntFieldUpdateOperationsInput | number
   matchFormat?: Prisma.EnumMatchFormatFieldUpdateOperationsInput | $Enums.MatchFormat
@@ -660,6 +678,7 @@ export type TournamentUncheckedUpdateManyInput = {
   startTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxPlayers?: Prisma.IntFieldUpdateOperationsInput | number
   maxWaitlist?: Prisma.IntFieldUpdateOperationsInput | number
+  registrationPasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamCount?: Prisma.IntFieldUpdateOperationsInput | number
   playersPerTeam?: Prisma.IntFieldUpdateOperationsInput | number
   matchFormat?: Prisma.EnumMatchFormatFieldUpdateOperationsInput | $Enums.MatchFormat
@@ -693,6 +712,7 @@ export type TournamentCountOrderByAggregateInput = {
   startTime?: Prisma.SortOrder
   maxPlayers?: Prisma.SortOrder
   maxWaitlist?: Prisma.SortOrder
+  registrationPasswordHash?: Prisma.SortOrder
   teamCount?: Prisma.SortOrder
   playersPerTeam?: Prisma.SortOrder
   matchFormat?: Prisma.SortOrder
@@ -725,6 +745,7 @@ export type TournamentMaxOrderByAggregateInput = {
   startTime?: Prisma.SortOrder
   maxPlayers?: Prisma.SortOrder
   maxWaitlist?: Prisma.SortOrder
+  registrationPasswordHash?: Prisma.SortOrder
   teamCount?: Prisma.SortOrder
   playersPerTeam?: Prisma.SortOrder
   matchFormat?: Prisma.SortOrder
@@ -748,6 +769,7 @@ export type TournamentMinOrderByAggregateInput = {
   startTime?: Prisma.SortOrder
   maxPlayers?: Prisma.SortOrder
   maxWaitlist?: Prisma.SortOrder
+  registrationPasswordHash?: Prisma.SortOrder
   teamCount?: Prisma.SortOrder
   playersPerTeam?: Prisma.SortOrder
   matchFormat?: Prisma.SortOrder
@@ -943,6 +965,7 @@ export type TournamentCreateWithoutCreatedByInput = {
   startTime?: Date | string | null
   maxPlayers?: number
   maxWaitlist?: number
+  registrationPasswordHash?: string | null
   teamCount?: number
   playersPerTeam?: number
   matchFormat?: $Enums.MatchFormat
@@ -972,6 +995,7 @@ export type TournamentUncheckedCreateWithoutCreatedByInput = {
   startTime?: Date | string | null
   maxPlayers?: number
   maxWaitlist?: number
+  registrationPasswordHash?: string | null
   teamCount?: number
   playersPerTeam?: number
   matchFormat?: $Enums.MatchFormat
@@ -1030,6 +1054,7 @@ export type TournamentScalarWhereInput = {
   startTime?: Prisma.DateTimeNullableFilter<"Tournament"> | Date | string | null
   maxPlayers?: Prisma.IntFilter<"Tournament"> | number
   maxWaitlist?: Prisma.IntFilter<"Tournament"> | number
+  registrationPasswordHash?: Prisma.StringNullableFilter<"Tournament"> | string | null
   teamCount?: Prisma.IntFilter<"Tournament"> | number
   playersPerTeam?: Prisma.IntFilter<"Tournament"> | number
   matchFormat?: Prisma.EnumMatchFormatFilter<"Tournament"> | $Enums.MatchFormat
@@ -1052,6 +1077,7 @@ export type TournamentCreateWithoutRegistrationsInput = {
   startTime?: Date | string | null
   maxPlayers?: number
   maxWaitlist?: number
+  registrationPasswordHash?: string | null
   teamCount?: number
   playersPerTeam?: number
   matchFormat?: $Enums.MatchFormat
@@ -1081,6 +1107,7 @@ export type TournamentUncheckedCreateWithoutRegistrationsInput = {
   startTime?: Date | string | null
   maxPlayers?: number
   maxWaitlist?: number
+  registrationPasswordHash?: string | null
   teamCount?: number
   playersPerTeam?: number
   matchFormat?: $Enums.MatchFormat
@@ -1125,6 +1152,7 @@ export type TournamentUpdateWithoutRegistrationsInput = {
   startTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxPlayers?: Prisma.IntFieldUpdateOperationsInput | number
   maxWaitlist?: Prisma.IntFieldUpdateOperationsInput | number
+  registrationPasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamCount?: Prisma.IntFieldUpdateOperationsInput | number
   playersPerTeam?: Prisma.IntFieldUpdateOperationsInput | number
   matchFormat?: Prisma.EnumMatchFormatFieldUpdateOperationsInput | $Enums.MatchFormat
@@ -1154,6 +1182,7 @@ export type TournamentUncheckedUpdateWithoutRegistrationsInput = {
   startTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxPlayers?: Prisma.IntFieldUpdateOperationsInput | number
   maxWaitlist?: Prisma.IntFieldUpdateOperationsInput | number
+  registrationPasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamCount?: Prisma.IntFieldUpdateOperationsInput | number
   playersPerTeam?: Prisma.IntFieldUpdateOperationsInput | number
   matchFormat?: Prisma.EnumMatchFormatFieldUpdateOperationsInput | $Enums.MatchFormat
@@ -1182,6 +1211,7 @@ export type TournamentCreateWithoutParticipantsInput = {
   startTime?: Date | string | null
   maxPlayers?: number
   maxWaitlist?: number
+  registrationPasswordHash?: string | null
   teamCount?: number
   playersPerTeam?: number
   matchFormat?: $Enums.MatchFormat
@@ -1211,6 +1241,7 @@ export type TournamentUncheckedCreateWithoutParticipantsInput = {
   startTime?: Date | string | null
   maxPlayers?: number
   maxWaitlist?: number
+  registrationPasswordHash?: string | null
   teamCount?: number
   playersPerTeam?: number
   matchFormat?: $Enums.MatchFormat
@@ -1255,6 +1286,7 @@ export type TournamentUpdateWithoutParticipantsInput = {
   startTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxPlayers?: Prisma.IntFieldUpdateOperationsInput | number
   maxWaitlist?: Prisma.IntFieldUpdateOperationsInput | number
+  registrationPasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamCount?: Prisma.IntFieldUpdateOperationsInput | number
   playersPerTeam?: Prisma.IntFieldUpdateOperationsInput | number
   matchFormat?: Prisma.EnumMatchFormatFieldUpdateOperationsInput | $Enums.MatchFormat
@@ -1284,6 +1316,7 @@ export type TournamentUncheckedUpdateWithoutParticipantsInput = {
   startTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxPlayers?: Prisma.IntFieldUpdateOperationsInput | number
   maxWaitlist?: Prisma.IntFieldUpdateOperationsInput | number
+  registrationPasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamCount?: Prisma.IntFieldUpdateOperationsInput | number
   playersPerTeam?: Prisma.IntFieldUpdateOperationsInput | number
   matchFormat?: Prisma.EnumMatchFormatFieldUpdateOperationsInput | $Enums.MatchFormat
@@ -1312,6 +1345,7 @@ export type TournamentCreateWithoutTeamsInput = {
   startTime?: Date | string | null
   maxPlayers?: number
   maxWaitlist?: number
+  registrationPasswordHash?: string | null
   teamCount?: number
   playersPerTeam?: number
   matchFormat?: $Enums.MatchFormat
@@ -1341,6 +1375,7 @@ export type TournamentUncheckedCreateWithoutTeamsInput = {
   startTime?: Date | string | null
   maxPlayers?: number
   maxWaitlist?: number
+  registrationPasswordHash?: string | null
   teamCount?: number
   playersPerTeam?: number
   matchFormat?: $Enums.MatchFormat
@@ -1385,6 +1420,7 @@ export type TournamentUpdateWithoutTeamsInput = {
   startTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxPlayers?: Prisma.IntFieldUpdateOperationsInput | number
   maxWaitlist?: Prisma.IntFieldUpdateOperationsInput | number
+  registrationPasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamCount?: Prisma.IntFieldUpdateOperationsInput | number
   playersPerTeam?: Prisma.IntFieldUpdateOperationsInput | number
   matchFormat?: Prisma.EnumMatchFormatFieldUpdateOperationsInput | $Enums.MatchFormat
@@ -1414,6 +1450,7 @@ export type TournamentUncheckedUpdateWithoutTeamsInput = {
   startTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxPlayers?: Prisma.IntFieldUpdateOperationsInput | number
   maxWaitlist?: Prisma.IntFieldUpdateOperationsInput | number
+  registrationPasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamCount?: Prisma.IntFieldUpdateOperationsInput | number
   playersPerTeam?: Prisma.IntFieldUpdateOperationsInput | number
   matchFormat?: Prisma.EnumMatchFormatFieldUpdateOperationsInput | $Enums.MatchFormat
@@ -1442,6 +1479,7 @@ export type TournamentCreateWithoutDraftSessionsInput = {
   startTime?: Date | string | null
   maxPlayers?: number
   maxWaitlist?: number
+  registrationPasswordHash?: string | null
   teamCount?: number
   playersPerTeam?: number
   matchFormat?: $Enums.MatchFormat
@@ -1471,6 +1509,7 @@ export type TournamentUncheckedCreateWithoutDraftSessionsInput = {
   startTime?: Date | string | null
   maxPlayers?: number
   maxWaitlist?: number
+  registrationPasswordHash?: string | null
   teamCount?: number
   playersPerTeam?: number
   matchFormat?: $Enums.MatchFormat
@@ -1515,6 +1554,7 @@ export type TournamentUpdateWithoutDraftSessionsInput = {
   startTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxPlayers?: Prisma.IntFieldUpdateOperationsInput | number
   maxWaitlist?: Prisma.IntFieldUpdateOperationsInput | number
+  registrationPasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamCount?: Prisma.IntFieldUpdateOperationsInput | number
   playersPerTeam?: Prisma.IntFieldUpdateOperationsInput | number
   matchFormat?: Prisma.EnumMatchFormatFieldUpdateOperationsInput | $Enums.MatchFormat
@@ -1544,6 +1584,7 @@ export type TournamentUncheckedUpdateWithoutDraftSessionsInput = {
   startTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxPlayers?: Prisma.IntFieldUpdateOperationsInput | number
   maxWaitlist?: Prisma.IntFieldUpdateOperationsInput | number
+  registrationPasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamCount?: Prisma.IntFieldUpdateOperationsInput | number
   playersPerTeam?: Prisma.IntFieldUpdateOperationsInput | number
   matchFormat?: Prisma.EnumMatchFormatFieldUpdateOperationsInput | $Enums.MatchFormat
@@ -1572,6 +1613,7 @@ export type TournamentCreateWithoutMatchesInput = {
   startTime?: Date | string | null
   maxPlayers?: number
   maxWaitlist?: number
+  registrationPasswordHash?: string | null
   teamCount?: number
   playersPerTeam?: number
   matchFormat?: $Enums.MatchFormat
@@ -1601,6 +1643,7 @@ export type TournamentUncheckedCreateWithoutMatchesInput = {
   startTime?: Date | string | null
   maxPlayers?: number
   maxWaitlist?: number
+  registrationPasswordHash?: string | null
   teamCount?: number
   playersPerTeam?: number
   matchFormat?: $Enums.MatchFormat
@@ -1645,6 +1688,7 @@ export type TournamentUpdateWithoutMatchesInput = {
   startTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxPlayers?: Prisma.IntFieldUpdateOperationsInput | number
   maxWaitlist?: Prisma.IntFieldUpdateOperationsInput | number
+  registrationPasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamCount?: Prisma.IntFieldUpdateOperationsInput | number
   playersPerTeam?: Prisma.IntFieldUpdateOperationsInput | number
   matchFormat?: Prisma.EnumMatchFormatFieldUpdateOperationsInput | $Enums.MatchFormat
@@ -1674,6 +1718,7 @@ export type TournamentUncheckedUpdateWithoutMatchesInput = {
   startTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxPlayers?: Prisma.IntFieldUpdateOperationsInput | number
   maxWaitlist?: Prisma.IntFieldUpdateOperationsInput | number
+  registrationPasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamCount?: Prisma.IntFieldUpdateOperationsInput | number
   playersPerTeam?: Prisma.IntFieldUpdateOperationsInput | number
   matchFormat?: Prisma.EnumMatchFormatFieldUpdateOperationsInput | $Enums.MatchFormat
@@ -1702,6 +1747,7 @@ export type TournamentCreateWithoutResultsInput = {
   startTime?: Date | string | null
   maxPlayers?: number
   maxWaitlist?: number
+  registrationPasswordHash?: string | null
   teamCount?: number
   playersPerTeam?: number
   matchFormat?: $Enums.MatchFormat
@@ -1731,6 +1777,7 @@ export type TournamentUncheckedCreateWithoutResultsInput = {
   startTime?: Date | string | null
   maxPlayers?: number
   maxWaitlist?: number
+  registrationPasswordHash?: string | null
   teamCount?: number
   playersPerTeam?: number
   matchFormat?: $Enums.MatchFormat
@@ -1775,6 +1822,7 @@ export type TournamentUpdateWithoutResultsInput = {
   startTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxPlayers?: Prisma.IntFieldUpdateOperationsInput | number
   maxWaitlist?: Prisma.IntFieldUpdateOperationsInput | number
+  registrationPasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamCount?: Prisma.IntFieldUpdateOperationsInput | number
   playersPerTeam?: Prisma.IntFieldUpdateOperationsInput | number
   matchFormat?: Prisma.EnumMatchFormatFieldUpdateOperationsInput | $Enums.MatchFormat
@@ -1804,6 +1852,7 @@ export type TournamentUncheckedUpdateWithoutResultsInput = {
   startTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxPlayers?: Prisma.IntFieldUpdateOperationsInput | number
   maxWaitlist?: Prisma.IntFieldUpdateOperationsInput | number
+  registrationPasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamCount?: Prisma.IntFieldUpdateOperationsInput | number
   playersPerTeam?: Prisma.IntFieldUpdateOperationsInput | number
   matchFormat?: Prisma.EnumMatchFormatFieldUpdateOperationsInput | $Enums.MatchFormat
@@ -1832,6 +1881,7 @@ export type TournamentCreateWithoutPointTransactionsInput = {
   startTime?: Date | string | null
   maxPlayers?: number
   maxWaitlist?: number
+  registrationPasswordHash?: string | null
   teamCount?: number
   playersPerTeam?: number
   matchFormat?: $Enums.MatchFormat
@@ -1861,6 +1911,7 @@ export type TournamentUncheckedCreateWithoutPointTransactionsInput = {
   startTime?: Date | string | null
   maxPlayers?: number
   maxWaitlist?: number
+  registrationPasswordHash?: string | null
   teamCount?: number
   playersPerTeam?: number
   matchFormat?: $Enums.MatchFormat
@@ -1905,6 +1956,7 @@ export type TournamentUpdateWithoutPointTransactionsInput = {
   startTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxPlayers?: Prisma.IntFieldUpdateOperationsInput | number
   maxWaitlist?: Prisma.IntFieldUpdateOperationsInput | number
+  registrationPasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamCount?: Prisma.IntFieldUpdateOperationsInput | number
   playersPerTeam?: Prisma.IntFieldUpdateOperationsInput | number
   matchFormat?: Prisma.EnumMatchFormatFieldUpdateOperationsInput | $Enums.MatchFormat
@@ -1934,6 +1986,7 @@ export type TournamentUncheckedUpdateWithoutPointTransactionsInput = {
   startTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxPlayers?: Prisma.IntFieldUpdateOperationsInput | number
   maxWaitlist?: Prisma.IntFieldUpdateOperationsInput | number
+  registrationPasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamCount?: Prisma.IntFieldUpdateOperationsInput | number
   playersPerTeam?: Prisma.IntFieldUpdateOperationsInput | number
   matchFormat?: Prisma.EnumMatchFormatFieldUpdateOperationsInput | $Enums.MatchFormat
@@ -1963,6 +2016,7 @@ export type TournamentCreateManyCreatedByInput = {
   startTime?: Date | string | null
   maxPlayers?: number
   maxWaitlist?: number
+  registrationPasswordHash?: string | null
   teamCount?: number
   playersPerTeam?: number
   matchFormat?: $Enums.MatchFormat
@@ -1984,6 +2038,7 @@ export type TournamentUpdateWithoutCreatedByInput = {
   startTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxPlayers?: Prisma.IntFieldUpdateOperationsInput | number
   maxWaitlist?: Prisma.IntFieldUpdateOperationsInput | number
+  registrationPasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamCount?: Prisma.IntFieldUpdateOperationsInput | number
   playersPerTeam?: Prisma.IntFieldUpdateOperationsInput | number
   matchFormat?: Prisma.EnumMatchFormatFieldUpdateOperationsInput | $Enums.MatchFormat
@@ -2013,6 +2068,7 @@ export type TournamentUncheckedUpdateWithoutCreatedByInput = {
   startTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxPlayers?: Prisma.IntFieldUpdateOperationsInput | number
   maxWaitlist?: Prisma.IntFieldUpdateOperationsInput | number
+  registrationPasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamCount?: Prisma.IntFieldUpdateOperationsInput | number
   playersPerTeam?: Prisma.IntFieldUpdateOperationsInput | number
   matchFormat?: Prisma.EnumMatchFormatFieldUpdateOperationsInput | $Enums.MatchFormat
@@ -2042,6 +2098,7 @@ export type TournamentUncheckedUpdateManyWithoutCreatedByInput = {
   startTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxPlayers?: Prisma.IntFieldUpdateOperationsInput | number
   maxWaitlist?: Prisma.IntFieldUpdateOperationsInput | number
+  registrationPasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamCount?: Prisma.IntFieldUpdateOperationsInput | number
   playersPerTeam?: Prisma.IntFieldUpdateOperationsInput | number
   matchFormat?: Prisma.EnumMatchFormatFieldUpdateOperationsInput | $Enums.MatchFormat
@@ -2149,6 +2206,7 @@ export type TournamentSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   startTime?: boolean
   maxPlayers?: boolean
   maxWaitlist?: boolean
+  registrationPasswordHash?: boolean
   teamCount?: boolean
   playersPerTeam?: boolean
   matchFormat?: boolean
@@ -2181,6 +2239,7 @@ export type TournamentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   startTime?: boolean
   maxPlayers?: boolean
   maxWaitlist?: boolean
+  registrationPasswordHash?: boolean
   teamCount?: boolean
   playersPerTeam?: boolean
   matchFormat?: boolean
@@ -2205,6 +2264,7 @@ export type TournamentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   startTime?: boolean
   maxPlayers?: boolean
   maxWaitlist?: boolean
+  registrationPasswordHash?: boolean
   teamCount?: boolean
   playersPerTeam?: boolean
   matchFormat?: boolean
@@ -2229,6 +2289,7 @@ export type TournamentSelectScalar = {
   startTime?: boolean
   maxPlayers?: boolean
   maxWaitlist?: boolean
+  registrationPasswordHash?: boolean
   teamCount?: boolean
   playersPerTeam?: boolean
   matchFormat?: boolean
@@ -2239,7 +2300,7 @@ export type TournamentSelectScalar = {
   settledAt?: boolean
 }
 
-export type TournamentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "description" | "status" | "registrationStart" | "registrationEnd" | "checkinStart" | "checkinEnd" | "startTime" | "maxPlayers" | "maxWaitlist" | "teamCount" | "playersPerTeam" | "matchFormat" | "tournamentFormat" | "createdById" | "createdAt" | "updatedAt" | "settledAt", ExtArgs["result"]["tournament"]>
+export type TournamentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "description" | "status" | "registrationStart" | "registrationEnd" | "checkinStart" | "checkinEnd" | "startTime" | "maxPlayers" | "maxWaitlist" | "registrationPasswordHash" | "teamCount" | "playersPerTeam" | "matchFormat" | "tournamentFormat" | "createdById" | "createdAt" | "updatedAt" | "settledAt", ExtArgs["result"]["tournament"]>
 export type TournamentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   registrations?: boolean | Prisma.Tournament$registrationsArgs<ExtArgs>
@@ -2283,6 +2344,7 @@ export type $TournamentPayload<ExtArgs extends runtime.Types.Extensions.Internal
     startTime: Date | null
     maxPlayers: number
     maxWaitlist: number
+    registrationPasswordHash: string | null
     teamCount: number
     playersPerTeam: number
     matchFormat: $Enums.MatchFormat
@@ -2734,6 +2796,7 @@ export interface TournamentFieldRefs {
   readonly startTime: Prisma.FieldRef<"Tournament", 'DateTime'>
   readonly maxPlayers: Prisma.FieldRef<"Tournament", 'Int'>
   readonly maxWaitlist: Prisma.FieldRef<"Tournament", 'Int'>
+  readonly registrationPasswordHash: Prisma.FieldRef<"Tournament", 'String'>
   readonly teamCount: Prisma.FieldRef<"Tournament", 'Int'>
   readonly playersPerTeam: Prisma.FieldRef<"Tournament", 'Int'>
   readonly matchFormat: Prisma.FieldRef<"Tournament", 'MatchFormat'>
