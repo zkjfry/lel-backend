@@ -5,6 +5,7 @@ import {
   Param,
   ParseIntPipe,
   Patch,
+  Post,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -23,7 +24,7 @@ export class PlayersController {
   constructor(
     private readonly playersService:
       PlayersService,
-  ) {}
+  ) { }
 
   // ============================================================
   // MY PROFILE DATA
@@ -56,6 +57,21 @@ export class PlayersController {
     return this.playersService.updateMine(
       request.user.sub,
       dto,
+    );
+  }
+
+  // ============================================================
+  // CONFIRM MY RANK
+  // ============================================================
+
+  @Post('me/rank/confirm')
+  @UseGuards(AuthGuard)
+  confirmMyRank(
+    @Req()
+    request: AuthenticatedRequest,
+  ) {
+    return this.playersService.confirmMyRank(
+      request.user.sub,
     );
   }
 

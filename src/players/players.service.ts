@@ -12,6 +12,7 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 import {
     ParticipantStatus,
     PlayerRole,
+    RankTier,
     UserRole,
     UserStatus,
 } from '../generated/prisma/enums';
@@ -87,6 +88,45 @@ export class PlayersService {
             throw new NotFoundException(
                 'Player profile not found',
             );
+        }
+
+        // ============================================================
+        // Confirmed rank cannot be changed by the player.
+        //
+        // Important:
+        // The current frontend may still submit the existing rank
+        // while editing unrelated profile fields.
+        //
+        // Therefore identical values are allowed.
+        // Only an actual rank change is forbidden.
+        // ============================================================
+
+        if (
+            existing.rankConfirmedAt
+        ) {
+            const rankTierChanged =
+                dto.rankTier !==
+                undefined
+                &&
+                dto.rankTier !==
+                existing.rankTier;
+
+            const rankDivisionChanged =
+                dto.rankDivision !==
+                undefined
+                &&
+                dto.rankDivision !==
+                existing.rankDivision;
+
+            if (
+                rankTierChanged
+                ||
+                rankDivisionChanged
+            ) {
+                throw new ForbiddenException(
+                    'Your rank has already been confirmed and can only be changed by an administrator',
+                );
+            }
         }
 
         const mainRole =
@@ -165,6 +205,183 @@ export class PlayersService {
                 },
             },
         });
+    }
+
+    // ============================================================
+    // CONFIRM MY RANK
+    // ============================================================
+
+    async confirmMyRank(
+        userId: number,
+    ) {
+        const profile =
+            await this.prisma.playerProfile.findUnique({
+                where: {
+                    userId,
+                },
+            });
+
+
+        if (!profile) {
+            throw new NotFoundException(
+                'Player profile not found',
+            );
+        }
+
+
+        if (
+            profile.rankConfirmedAt
+        ) {
+            throw new ConflictException(
+                'Rank has already been confirmed',
+            );
+        }
+
+
+        if (!profile.rankTier) {
+            throw new BadRequestException(
+                'Please set your rank before confirming it',
+            );
+        }
+
+
+        const rankHasDivision =
+            profile.rankTier !==
+            RankTier.MASTER
+            &&
+            profile.rankTier !==
+            RankTier.GRANDMASTER
+            &&
+            profile.rankTier !==
+            RankTier.CHALLENGER;
+
+
+        if (
+            rankHasDivision
+            &&
+            !profile.rankDivision
+        ) {
+            throw new BadRequestException(
+                'Please set your rank division before confirming it',
+            );
+        }
+
+
+        const confirmedAt =
+            new Date();
+
+
+        return this.prisma.$transaction(
+            async (tx) => {
+
+                const updated =
+                    await tx.playerProfile.update({
+                        where: {
+                            userId,
+                        },
+
+                        data: {
+                            rankConfirmedAt:
+                                confirmedAt,
+
+                            /*
+                             * MASTER / GRANDMASTER /
+                             * CHALLENGER have no division.
+                             *
+                             * Clear any stale value that may
+                             * have remained from an older rank.
+                             */
+                            ...(
+                                !rankHasDivision
+                                    ? {
+                                        rankDivision:
+                                            null,
+                                    }
+                                    : {}
+                            ),
+                        },
+
+                        include: {
+                            stats:
+                                true,
+
+                            roleRatings:
+                                true,
+
+                            user: {
+                                select: {
+                                    id:
+                                        true,
+
+                                    username:
+                                        true,
+
+                                    avatarUrl:
+                                        true,
+
+                                    role:
+                                        true,
+
+                                    status:
+                                        true,
+                                },
+                            },
+                        },
+                    });
+
+
+                await this.auditService.logWithTx(
+                    tx,
+                    {
+                        userId,
+
+                        action:
+                            'PLAYER_RANK_CONFIRMED',
+
+                        entityType:
+                            'PlayerProfile',
+
+                        entityId:
+                            profile.id,
+
+                        oldValue: {
+                            rankTier:
+                                profile.rankTier,
+
+                            ...(
+                                profile.rankDivision
+                                    ? {
+                                        rankDivision:
+                                            profile.rankDivision,
+                                    }
+                                    : {}
+                            ),
+                        },
+
+                        newValue: {
+                            rankTier:
+                                updated.rankTier!,
+
+                            ...(
+                                updated.rankDivision
+                                    ? {
+                                        rankDivision:
+                                            updated.rankDivision,
+                                    }
+                                    : {}
+                            ),
+
+                            rankConfirmedAt:
+                                confirmedAt.toISOString(),
+                        },
+                    },
+                );
+
+
+                return updated;
+
+            },
+        );
     }
 
     async getPublicProfile(
@@ -742,6 +959,239 @@ export class PlayersService {
 
             items,
         };
+    }
+
+    // ============================================================
+    // ADMIN: UPDATE PLAYER RANK
+    // ============================================================
+
+    async adminUpdateRank(
+        playerId: number,
+        rankTier: RankTier,
+        rankDivision: string | null | undefined,
+        actorUserId: number,
+        ipAddress?: string,
+    ) {
+
+        const player =
+            await this.prisma.playerProfile.findUnique({
+                where: {
+                    id: playerId,
+                },
+
+                select: {
+                    id: true,
+                    userId: true,
+
+                    displayName: true,
+
+                    rankTier: true,
+                    rankDivision: true,
+
+                    rankConfirmedAt: true,
+                },
+            });
+
+
+        if (!player) {
+            throw new NotFoundException(
+                'Player not found',
+            );
+        }
+
+
+        // --------------------------------------------------------
+        // MASTER / GRANDMASTER / CHALLENGER
+        // do not use a division.
+        // --------------------------------------------------------
+
+        const rankHasDivision =
+            rankTier !==
+            RankTier.MASTER
+            &&
+            rankTier !==
+            RankTier.GRANDMASTER
+            &&
+            rankTier !==
+            RankTier.CHALLENGER;
+
+
+        if (
+            rankHasDivision
+            &&
+            !rankDivision
+        ) {
+            throw new BadRequestException(
+                'Rank division is required for this rank tier',
+            );
+        }
+
+
+        const normalizedDivision =
+            rankHasDivision
+                ? rankDivision!
+                : null;
+
+
+        // --------------------------------------------------------
+        // No-op update is allowed.
+        // --------------------------------------------------------
+
+        if (
+            player.rankTier ===
+            rankTier
+            &&
+            player.rankDivision ===
+            normalizedDivision
+        ) {
+            return this.prisma.playerProfile.findUnique({
+                where: {
+                    id: playerId,
+                },
+
+                include: {
+                    stats:
+                        true,
+
+                    roleRatings:
+                        true,
+
+                    user: {
+                        select: {
+                            id:
+                                true,
+
+                            username:
+                                true,
+
+                            avatarUrl:
+                                true,
+
+                            role:
+                                true,
+
+                            status:
+                                true,
+                        },
+                    },
+                },
+            });
+        }
+
+
+        /*
+         * An administrator setting/changing a rank is considered
+         * authoritative.
+         *
+         * If this profile was not confirmed before, it becomes
+         * confirmed now.
+         */
+        const rankConfirmedAt =
+            player.rankConfirmedAt
+            ??
+            new Date();
+
+
+        return this.prisma.$transaction(
+            async (tx) => {
+
+                const updated =
+                    await tx.playerProfile.update({
+                        where: {
+                            id:
+                                playerId,
+                        },
+
+                        data: {
+                            rankTier,
+
+                            rankDivision:
+                                normalizedDivision,
+
+                            rankConfirmedAt,
+                        },
+
+                        include: {
+                            stats:
+                                true,
+
+                            roleRatings:
+                                true,
+
+                            user: {
+                                select: {
+                                    id:
+                                        true,
+
+                                    username:
+                                        true,
+
+                                    avatarUrl:
+                                        true,
+
+                                    role:
+                                        true,
+
+                                    status:
+                                        true,
+                                },
+                            },
+                        },
+                    });
+
+
+                await this.auditService.logWithTx(
+                    tx,
+                    {
+                        userId:
+                            actorUserId,
+
+                        action:
+                            'PLAYER_RANK_CHANGED',
+
+                        entityType:
+                            'PlayerProfile',
+
+                        entityId:
+                            player.id,
+
+                        oldValue: {
+                            rankTier:
+                                player.rankTier
+                                ??
+                                'UNRANKED',
+
+                            rankDivision:
+                                player.rankDivision
+                                ??
+                                null,
+                        },
+
+                        newValue: {
+                            rankTier:
+                                updated.rankTier!,
+
+                            rankDivision:
+                                updated.rankDivision
+                                ??
+                                null,
+
+                            rankConfirmedAt:
+                                updated
+                                    .rankConfirmedAt!
+                                    .toISOString(),
+                        },
+
+                        ipAddress,
+                    },
+                );
+
+
+                return updated;
+
+            },
+        );
+
     }
 
     async adminUpdateStatus(

@@ -167,8 +167,9 @@ model PlayerProfile {
   riotTagLine  String? @map("riot_tag_line") @db.VarChar(20)
   riotRegion   String? @map("riot_region") @db.VarChar(20)
 
-  rankTier     RankTier? @map("rank_tier")
-  rankDivision String?   @map("rank_division") @db.VarChar(10)
+  rankTier        RankTier? @map("rank_tier")
+  rankDivision    String?   @map("rank_division") @db.VarChar(10)
+  rankConfirmedAt DateTime? @map("rank_confirmed_at") @db.Timestamptz(3)
 
   mainRole      PlayerRole? @map("main_role")
   secondaryRole PlayerRole? @map("secondary_role")

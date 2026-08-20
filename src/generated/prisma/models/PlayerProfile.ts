@@ -45,6 +45,7 @@ export type PlayerProfileMinAggregateOutputType = {
   riotRegion: string | null
   rankTier: $Enums.RankTier | null
   rankDivision: string | null
+  rankConfirmedAt: Date | null
   mainRole: $Enums.PlayerRole | null
   secondaryRole: $Enums.PlayerRole | null
   yyName: string | null
@@ -62,6 +63,7 @@ export type PlayerProfileMaxAggregateOutputType = {
   riotRegion: string | null
   rankTier: $Enums.RankTier | null
   rankDivision: string | null
+  rankConfirmedAt: Date | null
   mainRole: $Enums.PlayerRole | null
   secondaryRole: $Enums.PlayerRole | null
   yyName: string | null
@@ -79,6 +81,7 @@ export type PlayerProfileCountAggregateOutputType = {
   riotRegion: number
   rankTier: number
   rankDivision: number
+  rankConfirmedAt: number
   mainRole: number
   secondaryRole: number
   yyName: number
@@ -108,6 +111,7 @@ export type PlayerProfileMinAggregateInputType = {
   riotRegion?: true
   rankTier?: true
   rankDivision?: true
+  rankConfirmedAt?: true
   mainRole?: true
   secondaryRole?: true
   yyName?: true
@@ -125,6 +129,7 @@ export type PlayerProfileMaxAggregateInputType = {
   riotRegion?: true
   rankTier?: true
   rankDivision?: true
+  rankConfirmedAt?: true
   mainRole?: true
   secondaryRole?: true
   yyName?: true
@@ -142,6 +147,7 @@ export type PlayerProfileCountAggregateInputType = {
   riotRegion?: true
   rankTier?: true
   rankDivision?: true
+  rankConfirmedAt?: true
   mainRole?: true
   secondaryRole?: true
   yyName?: true
@@ -246,6 +252,7 @@ export type PlayerProfileGroupByOutputType = {
   riotRegion: string | null
   rankTier: $Enums.RankTier | null
   rankDivision: string | null
+  rankConfirmedAt: Date | null
   mainRole: $Enums.PlayerRole | null
   secondaryRole: $Enums.PlayerRole | null
   yyName: string | null
@@ -286,6 +293,7 @@ export type PlayerProfileWhereInput = {
   riotRegion?: Prisma.StringNullableFilter<"PlayerProfile"> | string | null
   rankTier?: Prisma.EnumRankTierNullableFilter<"PlayerProfile"> | $Enums.RankTier | null
   rankDivision?: Prisma.StringNullableFilter<"PlayerProfile"> | string | null
+  rankConfirmedAt?: Prisma.DateTimeNullableFilter<"PlayerProfile"> | Date | string | null
   mainRole?: Prisma.EnumPlayerRoleNullableFilter<"PlayerProfile"> | $Enums.PlayerRole | null
   secondaryRole?: Prisma.EnumPlayerRoleNullableFilter<"PlayerProfile"> | $Enums.PlayerRole | null
   yyName?: Prisma.StringNullableFilter<"PlayerProfile"> | string | null
@@ -309,6 +317,7 @@ export type PlayerProfileOrderByWithRelationInput = {
   riotRegion?: Prisma.SortOrderInput | Prisma.SortOrder
   rankTier?: Prisma.SortOrderInput | Prisma.SortOrder
   rankDivision?: Prisma.SortOrderInput | Prisma.SortOrder
+  rankConfirmedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   mainRole?: Prisma.SortOrderInput | Prisma.SortOrder
   secondaryRole?: Prisma.SortOrderInput | Prisma.SortOrder
   yyName?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -335,6 +344,7 @@ export type PlayerProfileWhereUniqueInput = Prisma.AtLeast<{
   riotRegion?: Prisma.StringNullableFilter<"PlayerProfile"> | string | null
   rankTier?: Prisma.EnumRankTierNullableFilter<"PlayerProfile"> | $Enums.RankTier | null
   rankDivision?: Prisma.StringNullableFilter<"PlayerProfile"> | string | null
+  rankConfirmedAt?: Prisma.DateTimeNullableFilter<"PlayerProfile"> | Date | string | null
   mainRole?: Prisma.EnumPlayerRoleNullableFilter<"PlayerProfile"> | $Enums.PlayerRole | null
   secondaryRole?: Prisma.EnumPlayerRoleNullableFilter<"PlayerProfile"> | $Enums.PlayerRole | null
   yyName?: Prisma.StringNullableFilter<"PlayerProfile"> | string | null
@@ -358,6 +368,7 @@ export type PlayerProfileOrderByWithAggregationInput = {
   riotRegion?: Prisma.SortOrderInput | Prisma.SortOrder
   rankTier?: Prisma.SortOrderInput | Prisma.SortOrder
   rankDivision?: Prisma.SortOrderInput | Prisma.SortOrder
+  rankConfirmedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   mainRole?: Prisma.SortOrderInput | Prisma.SortOrder
   secondaryRole?: Prisma.SortOrderInput | Prisma.SortOrder
   yyName?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -383,6 +394,7 @@ export type PlayerProfileScalarWhereWithAggregatesInput = {
   riotRegion?: Prisma.StringNullableWithAggregatesFilter<"PlayerProfile"> | string | null
   rankTier?: Prisma.EnumRankTierNullableWithAggregatesFilter<"PlayerProfile"> | $Enums.RankTier | null
   rankDivision?: Prisma.StringNullableWithAggregatesFilter<"PlayerProfile"> | string | null
+  rankConfirmedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"PlayerProfile"> | Date | string | null
   mainRole?: Prisma.EnumPlayerRoleNullableWithAggregatesFilter<"PlayerProfile"> | $Enums.PlayerRole | null
   secondaryRole?: Prisma.EnumPlayerRoleNullableWithAggregatesFilter<"PlayerProfile"> | $Enums.PlayerRole | null
   yyName?: Prisma.StringNullableWithAggregatesFilter<"PlayerProfile"> | string | null
@@ -398,6 +410,7 @@ export type PlayerProfileCreateInput = {
   riotRegion?: string | null
   rankTier?: $Enums.RankTier | null
   rankDivision?: string | null
+  rankConfirmedAt?: Date | string | null
   mainRole?: $Enums.PlayerRole | null
   secondaryRole?: $Enums.PlayerRole | null
   yyName?: string | null
@@ -421,6 +434,7 @@ export type PlayerProfileUncheckedCreateInput = {
   riotRegion?: string | null
   rankTier?: $Enums.RankTier | null
   rankDivision?: string | null
+  rankConfirmedAt?: Date | string | null
   mainRole?: $Enums.PlayerRole | null
   secondaryRole?: $Enums.PlayerRole | null
   yyName?: string | null
@@ -441,6 +455,7 @@ export type PlayerProfileUpdateInput = {
   riotRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rankTier?: Prisma.NullableEnumRankTierFieldUpdateOperationsInput | $Enums.RankTier | null
   rankDivision?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rankConfirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mainRole?: Prisma.NullableEnumPlayerRoleFieldUpdateOperationsInput | $Enums.PlayerRole | null
   secondaryRole?: Prisma.NullableEnumPlayerRoleFieldUpdateOperationsInput | $Enums.PlayerRole | null
   yyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -464,6 +479,7 @@ export type PlayerProfileUncheckedUpdateInput = {
   riotRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rankTier?: Prisma.NullableEnumRankTierFieldUpdateOperationsInput | $Enums.RankTier | null
   rankDivision?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rankConfirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mainRole?: Prisma.NullableEnumPlayerRoleFieldUpdateOperationsInput | $Enums.PlayerRole | null
   secondaryRole?: Prisma.NullableEnumPlayerRoleFieldUpdateOperationsInput | $Enums.PlayerRole | null
   yyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -486,6 +502,7 @@ export type PlayerProfileCreateManyInput = {
   riotRegion?: string | null
   rankTier?: $Enums.RankTier | null
   rankDivision?: string | null
+  rankConfirmedAt?: Date | string | null
   mainRole?: $Enums.PlayerRole | null
   secondaryRole?: $Enums.PlayerRole | null
   yyName?: string | null
@@ -501,6 +518,7 @@ export type PlayerProfileUpdateManyMutationInput = {
   riotRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rankTier?: Prisma.NullableEnumRankTierFieldUpdateOperationsInput | $Enums.RankTier | null
   rankDivision?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rankConfirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mainRole?: Prisma.NullableEnumPlayerRoleFieldUpdateOperationsInput | $Enums.PlayerRole | null
   secondaryRole?: Prisma.NullableEnumPlayerRoleFieldUpdateOperationsInput | $Enums.PlayerRole | null
   yyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -518,6 +536,7 @@ export type PlayerProfileUncheckedUpdateManyInput = {
   riotRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rankTier?: Prisma.NullableEnumRankTierFieldUpdateOperationsInput | $Enums.RankTier | null
   rankDivision?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rankConfirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mainRole?: Prisma.NullableEnumPlayerRoleFieldUpdateOperationsInput | $Enums.PlayerRole | null
   secondaryRole?: Prisma.NullableEnumPlayerRoleFieldUpdateOperationsInput | $Enums.PlayerRole | null
   yyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -540,6 +559,7 @@ export type PlayerProfileCountOrderByAggregateInput = {
   riotRegion?: Prisma.SortOrder
   rankTier?: Prisma.SortOrder
   rankDivision?: Prisma.SortOrder
+  rankConfirmedAt?: Prisma.SortOrder
   mainRole?: Prisma.SortOrder
   secondaryRole?: Prisma.SortOrder
   yyName?: Prisma.SortOrder
@@ -562,6 +582,7 @@ export type PlayerProfileMaxOrderByAggregateInput = {
   riotRegion?: Prisma.SortOrder
   rankTier?: Prisma.SortOrder
   rankDivision?: Prisma.SortOrder
+  rankConfirmedAt?: Prisma.SortOrder
   mainRole?: Prisma.SortOrder
   secondaryRole?: Prisma.SortOrder
   yyName?: Prisma.SortOrder
@@ -579,6 +600,7 @@ export type PlayerProfileMinOrderByAggregateInput = {
   riotRegion?: Prisma.SortOrder
   rankTier?: Prisma.SortOrder
   rankDivision?: Prisma.SortOrder
+  rankConfirmedAt?: Prisma.SortOrder
   mainRole?: Prisma.SortOrder
   secondaryRole?: Prisma.SortOrder
   yyName?: Prisma.SortOrder
@@ -714,6 +736,7 @@ export type PlayerProfileCreateWithoutUserInput = {
   riotRegion?: string | null
   rankTier?: $Enums.RankTier | null
   rankDivision?: string | null
+  rankConfirmedAt?: Date | string | null
   mainRole?: $Enums.PlayerRole | null
   secondaryRole?: $Enums.PlayerRole | null
   yyName?: string | null
@@ -735,6 +758,7 @@ export type PlayerProfileUncheckedCreateWithoutUserInput = {
   riotRegion?: string | null
   rankTier?: $Enums.RankTier | null
   rankDivision?: string | null
+  rankConfirmedAt?: Date | string | null
   mainRole?: $Enums.PlayerRole | null
   secondaryRole?: $Enums.PlayerRole | null
   yyName?: string | null
@@ -771,6 +795,7 @@ export type PlayerProfileUpdateWithoutUserInput = {
   riotRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rankTier?: Prisma.NullableEnumRankTierFieldUpdateOperationsInput | $Enums.RankTier | null
   rankDivision?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rankConfirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mainRole?: Prisma.NullableEnumPlayerRoleFieldUpdateOperationsInput | $Enums.PlayerRole | null
   secondaryRole?: Prisma.NullableEnumPlayerRoleFieldUpdateOperationsInput | $Enums.PlayerRole | null
   yyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -792,6 +817,7 @@ export type PlayerProfileUncheckedUpdateWithoutUserInput = {
   riotRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rankTier?: Prisma.NullableEnumRankTierFieldUpdateOperationsInput | $Enums.RankTier | null
   rankDivision?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rankConfirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mainRole?: Prisma.NullableEnumPlayerRoleFieldUpdateOperationsInput | $Enums.PlayerRole | null
   secondaryRole?: Prisma.NullableEnumPlayerRoleFieldUpdateOperationsInput | $Enums.PlayerRole | null
   yyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -812,6 +838,7 @@ export type PlayerProfileCreateWithoutRegistrationsInput = {
   riotRegion?: string | null
   rankTier?: $Enums.RankTier | null
   rankDivision?: string | null
+  rankConfirmedAt?: Date | string | null
   mainRole?: $Enums.PlayerRole | null
   secondaryRole?: $Enums.PlayerRole | null
   yyName?: string | null
@@ -834,6 +861,7 @@ export type PlayerProfileUncheckedCreateWithoutRegistrationsInput = {
   riotRegion?: string | null
   rankTier?: $Enums.RankTier | null
   rankDivision?: string | null
+  rankConfirmedAt?: Date | string | null
   mainRole?: $Enums.PlayerRole | null
   secondaryRole?: $Enums.PlayerRole | null
   yyName?: string | null
@@ -869,6 +897,7 @@ export type PlayerProfileUpdateWithoutRegistrationsInput = {
   riotRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rankTier?: Prisma.NullableEnumRankTierFieldUpdateOperationsInput | $Enums.RankTier | null
   rankDivision?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rankConfirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mainRole?: Prisma.NullableEnumPlayerRoleFieldUpdateOperationsInput | $Enums.PlayerRole | null
   secondaryRole?: Prisma.NullableEnumPlayerRoleFieldUpdateOperationsInput | $Enums.PlayerRole | null
   yyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -891,6 +920,7 @@ export type PlayerProfileUncheckedUpdateWithoutRegistrationsInput = {
   riotRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rankTier?: Prisma.NullableEnumRankTierFieldUpdateOperationsInput | $Enums.RankTier | null
   rankDivision?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rankConfirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mainRole?: Prisma.NullableEnumPlayerRoleFieldUpdateOperationsInput | $Enums.PlayerRole | null
   secondaryRole?: Prisma.NullableEnumPlayerRoleFieldUpdateOperationsInput | $Enums.PlayerRole | null
   yyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -910,6 +940,7 @@ export type PlayerProfileCreateWithoutParticipantsInput = {
   riotRegion?: string | null
   rankTier?: $Enums.RankTier | null
   rankDivision?: string | null
+  rankConfirmedAt?: Date | string | null
   mainRole?: $Enums.PlayerRole | null
   secondaryRole?: $Enums.PlayerRole | null
   yyName?: string | null
@@ -932,6 +963,7 @@ export type PlayerProfileUncheckedCreateWithoutParticipantsInput = {
   riotRegion?: string | null
   rankTier?: $Enums.RankTier | null
   rankDivision?: string | null
+  rankConfirmedAt?: Date | string | null
   mainRole?: $Enums.PlayerRole | null
   secondaryRole?: $Enums.PlayerRole | null
   yyName?: string | null
@@ -967,6 +999,7 @@ export type PlayerProfileUpdateWithoutParticipantsInput = {
   riotRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rankTier?: Prisma.NullableEnumRankTierFieldUpdateOperationsInput | $Enums.RankTier | null
   rankDivision?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rankConfirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mainRole?: Prisma.NullableEnumPlayerRoleFieldUpdateOperationsInput | $Enums.PlayerRole | null
   secondaryRole?: Prisma.NullableEnumPlayerRoleFieldUpdateOperationsInput | $Enums.PlayerRole | null
   yyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -989,6 +1022,7 @@ export type PlayerProfileUncheckedUpdateWithoutParticipantsInput = {
   riotRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rankTier?: Prisma.NullableEnumRankTierFieldUpdateOperationsInput | $Enums.RankTier | null
   rankDivision?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rankConfirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mainRole?: Prisma.NullableEnumPlayerRoleFieldUpdateOperationsInput | $Enums.PlayerRole | null
   secondaryRole?: Prisma.NullableEnumPlayerRoleFieldUpdateOperationsInput | $Enums.PlayerRole | null
   yyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1008,6 +1042,7 @@ export type PlayerProfileCreateWithoutStatsInput = {
   riotRegion?: string | null
   rankTier?: $Enums.RankTier | null
   rankDivision?: string | null
+  rankConfirmedAt?: Date | string | null
   mainRole?: $Enums.PlayerRole | null
   secondaryRole?: $Enums.PlayerRole | null
   yyName?: string | null
@@ -1030,6 +1065,7 @@ export type PlayerProfileUncheckedCreateWithoutStatsInput = {
   riotRegion?: string | null
   rankTier?: $Enums.RankTier | null
   rankDivision?: string | null
+  rankConfirmedAt?: Date | string | null
   mainRole?: $Enums.PlayerRole | null
   secondaryRole?: $Enums.PlayerRole | null
   yyName?: string | null
@@ -1065,6 +1101,7 @@ export type PlayerProfileUpdateWithoutStatsInput = {
   riotRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rankTier?: Prisma.NullableEnumRankTierFieldUpdateOperationsInput | $Enums.RankTier | null
   rankDivision?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rankConfirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mainRole?: Prisma.NullableEnumPlayerRoleFieldUpdateOperationsInput | $Enums.PlayerRole | null
   secondaryRole?: Prisma.NullableEnumPlayerRoleFieldUpdateOperationsInput | $Enums.PlayerRole | null
   yyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1087,6 +1124,7 @@ export type PlayerProfileUncheckedUpdateWithoutStatsInput = {
   riotRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rankTier?: Prisma.NullableEnumRankTierFieldUpdateOperationsInput | $Enums.RankTier | null
   rankDivision?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rankConfirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mainRole?: Prisma.NullableEnumPlayerRoleFieldUpdateOperationsInput | $Enums.PlayerRole | null
   secondaryRole?: Prisma.NullableEnumPlayerRoleFieldUpdateOperationsInput | $Enums.PlayerRole | null
   yyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1106,6 +1144,7 @@ export type PlayerProfileCreateWithoutRoleRatingsInput = {
   riotRegion?: string | null
   rankTier?: $Enums.RankTier | null
   rankDivision?: string | null
+  rankConfirmedAt?: Date | string | null
   mainRole?: $Enums.PlayerRole | null
   secondaryRole?: $Enums.PlayerRole | null
   yyName?: string | null
@@ -1128,6 +1167,7 @@ export type PlayerProfileUncheckedCreateWithoutRoleRatingsInput = {
   riotRegion?: string | null
   rankTier?: $Enums.RankTier | null
   rankDivision?: string | null
+  rankConfirmedAt?: Date | string | null
   mainRole?: $Enums.PlayerRole | null
   secondaryRole?: $Enums.PlayerRole | null
   yyName?: string | null
@@ -1163,6 +1203,7 @@ export type PlayerProfileUpdateWithoutRoleRatingsInput = {
   riotRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rankTier?: Prisma.NullableEnumRankTierFieldUpdateOperationsInput | $Enums.RankTier | null
   rankDivision?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rankConfirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mainRole?: Prisma.NullableEnumPlayerRoleFieldUpdateOperationsInput | $Enums.PlayerRole | null
   secondaryRole?: Prisma.NullableEnumPlayerRoleFieldUpdateOperationsInput | $Enums.PlayerRole | null
   yyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1185,6 +1226,7 @@ export type PlayerProfileUncheckedUpdateWithoutRoleRatingsInput = {
   riotRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rankTier?: Prisma.NullableEnumRankTierFieldUpdateOperationsInput | $Enums.RankTier | null
   rankDivision?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rankConfirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mainRole?: Prisma.NullableEnumPlayerRoleFieldUpdateOperationsInput | $Enums.PlayerRole | null
   secondaryRole?: Prisma.NullableEnumPlayerRoleFieldUpdateOperationsInput | $Enums.PlayerRole | null
   yyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1204,6 +1246,7 @@ export type PlayerProfileCreateWithoutPointTransactionsInput = {
   riotRegion?: string | null
   rankTier?: $Enums.RankTier | null
   rankDivision?: string | null
+  rankConfirmedAt?: Date | string | null
   mainRole?: $Enums.PlayerRole | null
   secondaryRole?: $Enums.PlayerRole | null
   yyName?: string | null
@@ -1226,6 +1269,7 @@ export type PlayerProfileUncheckedCreateWithoutPointTransactionsInput = {
   riotRegion?: string | null
   rankTier?: $Enums.RankTier | null
   rankDivision?: string | null
+  rankConfirmedAt?: Date | string | null
   mainRole?: $Enums.PlayerRole | null
   secondaryRole?: $Enums.PlayerRole | null
   yyName?: string | null
@@ -1261,6 +1305,7 @@ export type PlayerProfileUpdateWithoutPointTransactionsInput = {
   riotRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rankTier?: Prisma.NullableEnumRankTierFieldUpdateOperationsInput | $Enums.RankTier | null
   rankDivision?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rankConfirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mainRole?: Prisma.NullableEnumPlayerRoleFieldUpdateOperationsInput | $Enums.PlayerRole | null
   secondaryRole?: Prisma.NullableEnumPlayerRoleFieldUpdateOperationsInput | $Enums.PlayerRole | null
   yyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1283,6 +1328,7 @@ export type PlayerProfileUncheckedUpdateWithoutPointTransactionsInput = {
   riotRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rankTier?: Prisma.NullableEnumRankTierFieldUpdateOperationsInput | $Enums.RankTier | null
   rankDivision?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rankConfirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mainRole?: Prisma.NullableEnumPlayerRoleFieldUpdateOperationsInput | $Enums.PlayerRole | null
   secondaryRole?: Prisma.NullableEnumPlayerRoleFieldUpdateOperationsInput | $Enums.PlayerRole | null
   yyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1362,6 +1408,7 @@ export type PlayerProfileSelect<ExtArgs extends runtime.Types.Extensions.Interna
   riotRegion?: boolean
   rankTier?: boolean
   rankDivision?: boolean
+  rankConfirmedAt?: boolean
   mainRole?: boolean
   secondaryRole?: boolean
   yyName?: boolean
@@ -1386,6 +1433,7 @@ export type PlayerProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   riotRegion?: boolean
   rankTier?: boolean
   rankDivision?: boolean
+  rankConfirmedAt?: boolean
   mainRole?: boolean
   secondaryRole?: boolean
   yyName?: boolean
@@ -1404,6 +1452,7 @@ export type PlayerProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   riotRegion?: boolean
   rankTier?: boolean
   rankDivision?: boolean
+  rankConfirmedAt?: boolean
   mainRole?: boolean
   secondaryRole?: boolean
   yyName?: boolean
@@ -1422,6 +1471,7 @@ export type PlayerProfileSelectScalar = {
   riotRegion?: boolean
   rankTier?: boolean
   rankDivision?: boolean
+  rankConfirmedAt?: boolean
   mainRole?: boolean
   secondaryRole?: boolean
   yyName?: boolean
@@ -1430,7 +1480,7 @@ export type PlayerProfileSelectScalar = {
   updatedAt?: boolean
 }
 
-export type PlayerProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "displayName" | "riotGameName" | "riotTagLine" | "riotRegion" | "rankTier" | "rankDivision" | "mainRole" | "secondaryRole" | "yyName" | "bio" | "createdAt" | "updatedAt", ExtArgs["result"]["playerProfile"]>
+export type PlayerProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "displayName" | "riotGameName" | "riotTagLine" | "riotRegion" | "rankTier" | "rankDivision" | "rankConfirmedAt" | "mainRole" | "secondaryRole" | "yyName" | "bio" | "createdAt" | "updatedAt", ExtArgs["result"]["playerProfile"]>
 export type PlayerProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   stats?: boolean | Prisma.PlayerProfile$statsArgs<ExtArgs>
@@ -1466,6 +1516,7 @@ export type $PlayerProfilePayload<ExtArgs extends runtime.Types.Extensions.Inter
     riotRegion: string | null
     rankTier: $Enums.RankTier | null
     rankDivision: string | null
+    rankConfirmedAt: Date | null
     mainRole: $Enums.PlayerRole | null
     secondaryRole: $Enums.PlayerRole | null
     yyName: string | null
@@ -1909,6 +1960,7 @@ export interface PlayerProfileFieldRefs {
   readonly riotRegion: Prisma.FieldRef<"PlayerProfile", 'String'>
   readonly rankTier: Prisma.FieldRef<"PlayerProfile", 'RankTier'>
   readonly rankDivision: Prisma.FieldRef<"PlayerProfile", 'String'>
+  readonly rankConfirmedAt: Prisma.FieldRef<"PlayerProfile", 'DateTime'>
   readonly mainRole: Prisma.FieldRef<"PlayerProfile", 'PlayerRole'>
   readonly secondaryRole: Prisma.FieldRef<"PlayerProfile", 'PlayerRole'>
   readonly yyName: Prisma.FieldRef<"PlayerProfile", 'String'>

@@ -32,6 +32,10 @@ import { UpdatePlayerStatusDto } from './dto/update-player-status.dto';
 
 import { PlayersService } from './players.service';
 
+import {
+    UpdatePlayerRankDto,
+} from './dto/update-player-rank.dto';
+
 @Controller('admin/players')
 @UseGuards(
     AuthGuard,
@@ -140,6 +144,36 @@ export class AdminPlayersController {
             dto.status,
             request.user.sub,
             request.user.role,
+            this.getIpAddress(
+                request,
+            ),
+        );
+    }
+
+    // ------------------------------------------------------------
+    // RANK
+    // ADMIN / SUPER_ADMIN
+    // ------------------------------------------------------------
+
+    @Patch(':playerId/rank')
+    updateRank(
+        @Param(
+            'playerId',
+            ParseIntPipe,
+        )
+        playerId: number,
+
+        @Body()
+        dto: UpdatePlayerRankDto,
+
+        @Req()
+        request: AuthenticatedRequest,
+    ) {
+        return this.playersService.adminUpdateRank(
+            playerId,
+            dto.rankTier,
+            dto.rankDivision,
+            request.user.sub,
             this.getIpAddress(
                 request,
             ),

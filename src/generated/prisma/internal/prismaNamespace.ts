@@ -1906,6 +1906,7 @@ export const PlayerProfileScalarFieldEnum = {
   riotRegion: 'riotRegion',
   rankTier: 'rankTier',
   rankDivision: 'rankDivision',
+  rankConfirmedAt: 'rankConfirmedAt',
   mainRole: 'mainRole',
   secondaryRole: 'secondaryRole',
   yyName: 'yyName',
